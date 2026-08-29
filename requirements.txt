@@ -1,0 +1,5 @@
+# Pinned. Floating versions have bitten people mid-evaluation.
+# Verified on Python 3.12.3.
+numpy==2.4.4
+scipy==1.17.1
+pytest==9.0.1          # tests only; not needed to run the pipeline
