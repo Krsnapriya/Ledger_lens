@@ -335,8 +335,6 @@ retirement, pool-cap refusal, and a zero-tolerance ceiling on adversarial FMR.
 
 ## What broke, and how I got out
 
-Chronological. Each cost a real debugging session.
-
 1. **The first run reported 100% and I did not believe it.** Seed 7 was luck; the
    40-seed sweep showed min 73.08% and FMR up to 9.09%.
 2. **The generator injected an anomaly it did not label.** Wrong-fee injection left
