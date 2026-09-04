@@ -249,7 +249,8 @@ def engine_false_matches(ctl: LiveController, truth: dict) -> tuple[int, int, li
     return fp, total, sample
 
 
-def run_one(seed: int, steps: int, orders: int = 300) -> dict:
+def run_one(seed: int, steps: int, orders: int = 300,
+           fail_fast: bool = False) -> dict:
     d = Path(tempfile.mkdtemp())
     generate.write(generate.generate(orders, seed, 1.0), d)
     data, _ = normalize.load_all(d)
@@ -259,7 +260,24 @@ def run_one(seed: int, steps: int, orders: int = 300) -> dict:
     mutations.bind_truth(data, truth)
     ctl = LiveController(data, cfg)
     plan = build_plan(ctl, truth, steps, seed)
-    drive(ctl, plan)
+    if fail_fast:
+        # Stop at the FIRST window that violates an invariant, not after the
+        # full sweep. Flagged as Gap 10 and left unbuilt for several turns —
+        # the aggregate-only harness can report "3/120 = 2.5%" without ever
+        # telling you WHICH step introduced each one, which is exactly the
+        # information a real incident response needs first.
+        for i, step in enumerate(plan):
+            drive(ctl, [step])
+            ctl.assert_log_state_consistent()
+            fp_now, tot_now, sample_now = engine_false_matches(ctl, truth)
+            if fp_now > 0 and fp_now != getattr(run_one, "_last_fp", 0):
+                raise AssertionError(
+                    f"seed {seed} step {i} ({step['type']}): engine false match "
+                    f"introduced — {sample_now[:2]}")
+            run_one._last_fp = fp_now
+        run_one._last_fp = 0
+    else:
+        drive(ctl, plan)
 
     fp, total, sample = engine_false_matches(ctl, truth)
 
@@ -312,6 +330,9 @@ def main(argv=None) -> int:
     ap.add_argument("--steps", type=int, default=80)
     ap.add_argument("--seeds", type=int, default=6)
     ap.add_argument("--orders", type=int, default=300)
+    ap.add_argument("--fail-fast", action="store_true",
+                    help="stop at the first invariant violation, per-step, "
+                    "instead of reporting an aggregate at the end")
     a = ap.parse_args(argv)
 
     rows = [run_one(s, a.steps, a.orders) for s in range(1, a.seeds + 1)]

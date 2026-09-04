@@ -37,6 +37,7 @@ class Reason(str, Enum):
     AMOUNT_MISMATCH = "AMOUNT_MISMATCH"
     BELOW_CONFIDENCE_THRESHOLD = "BELOW_CONFIDENCE_THRESHOLD"  # abstained
     AMBIGUOUS_SUBSET = "AMBIGUOUS_SUBSET"       # >1 group sums to the same target
+    AMBIGUOUS_ASSIGNMENT = "AMBIGUOUS_ASSIGNMENT"  # >1 equally valid 1:1 pairing
     DUPLICATE_CLAIM = "DUPLICATE_CLAIM"         # solution unique only because a twin was consumed
     OVERRIDE_LEAK = "OVERRIDE_LEAK"             # a human-asserted record reached the engine
     POOL_CAP_EXCEEDED = "POOL_CAP_EXCEEDED"     # too many candidates to decide safely
@@ -52,6 +53,7 @@ SEVERITY: dict[Reason, int] = {
     Reason.AMOUNT_MISMATCH: 80,
     Reason.UNEXPLAINED_BANK_CREDIT: 70,
     Reason.AMBIGUOUS_SUBSET: 68,
+    Reason.AMBIGUOUS_ASSIGNMENT: 66,
     Reason.POOL_CAP_EXCEEDED: 69,
     Reason.DUPLICATE_CLAIM: 67,
     Reason.SPLIT_SPANS_LONG_WINDOW: 65,
@@ -73,6 +75,7 @@ SUGGESTED_ACTION: dict[Reason, str] = {
     Reason.UNEXPLAINED_BANK_CREDIT: "Identify remitter; likely direct customer transfer, not gateway.",
     Reason.AMBIGUOUS_SUBSET: "Multiple settlement groups sum to this amount; request the gateway breakup file to disambiguate.",
     Reason.POOL_CAP_EXCEEDED: "Too many candidates in the window to decide safely. Narrow the period or obtain the gateway breakup file; do not accept a partial attribution.",
+    Reason.AMBIGUOUS_ASSIGNMENT: "Several ledger rows and bank rows in this window share an amount and date; the pairing an optimiser returns is arbitrary. Obtain a reference that distinguishes them before attributing.",
     Reason.DUPLICATE_CLAIM: "A member of this group has an amount-identical twin elsewhere in the window; the grouping is only unique because the twin was already consumed. Confirm which credit belongs to this payout.",
     Reason.SPLIT_SPANS_LONG_WINDOW: "Payout arrived in tranches days apart — likely a rolling reserve or holdback. Confirm the reserve policy and the working capital held.",
     Reason.FEE_RATE_MISMATCH: "Compare against contracted MDR; raise fee dispute if confirmed.",
@@ -114,6 +117,11 @@ class Settlement:
     settled_on: date
     payout_paise: int                # what the gateway says it sent
     utr: str | None                  # bank reference, sometimes absent
+    descriptor: str = ""             # optional free-text (e.g. a ledger allocation
+                                     # string) the fuzzy layer can match a bank
+                                     # narration against when the id itself carries
+                                     # no descriptive signal. Empty on synthetic
+                                     # data, where the id IS the signal.
 
 
 @dataclass(frozen=True)

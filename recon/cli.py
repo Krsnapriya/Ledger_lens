@@ -41,6 +41,16 @@ def main(argv=None) -> int:
     ap.add_argument("--out", type=Path, default=Path("artifacts"))
     ap.add_argument("--use-llm", action="store_true",
                     help="enable optional LLM re-rank on the residual (needs ANTHROPIC_API_KEY)")
+    ap.add_argument("--require-unique-assignment", type=lambda x: x.lower() != "false",
+                    default=True, metavar="{True,False}",
+                    help="Hungarian 1:1 layer: refuse a pairing unless it is "
+                    "bidirectionally the only feasible candidate (AMBIGUOUS_ASSIGNMENT "
+                    "otherwise). Default True.")
+    ap.add_argument("--refuse-contingent-subsets", type=lambda x: x.lower() != "false",
+                    default=True, metavar="{True,False}",
+                    help="subset-sum layer: refuse a group unique only because an "
+                    "earlier match consumed its twin (DUPLICATE_CLAIM otherwise). "
+                    "Default True.")
     ap.add_argument("--no-ablation", action="store_true")
     ap.add_argument("--quiet", action="store_true")
     a = ap.parse_args(argv)
@@ -62,7 +72,9 @@ def main(argv=None) -> int:
         say(f"ingest rejects: {len(rejects)} (reported, not dropped)")
 
     # ---------- 3. reconcile ----------
-    cfg = MatcherConfig(confidence_threshold=a.threshold, use_llm=a.use_llm)
+    cfg = MatcherConfig(confidence_threshold=a.threshold, use_llm=a.use_llm,
+                        require_unique_assignment=a.require_unique_assignment,
+                        refuse_contingent_subsets=a.refuse_contingent_subsets)
     result = reconcile(data, cfg)
 
     # A second pass with the threshold floored, used only to draw the abstention

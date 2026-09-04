@@ -72,6 +72,28 @@ class MatcherConfig:
     # first — which is exactly how a phantom credit substitutes for a real half
     # of a split. Checked against the FULL window, matched lines included.
     refuse_contingent_subsets: bool = True
+    # Extend uniqueness from subset-sum to the 1:1 assignment stage.
+    #
+    # The subset-sum stage refuses a target reachable more than one way; the
+    # assignment stage did not. When several ledger rows and bank rows in a
+    # window share an amount and a date, the Hungarian optimiser returns *a*
+    # minimum-cost pairing, and which one is arbitrary — every permutation
+    # within the tied block costs the same. On synthetic data this never
+    # mattered, because a payout total is a sum of dozens of random captures and
+    # behaves as a near-unique key. On real reconciliation data it is the
+    # dominant error: 1,700 of 1,886 false matches on BenchRec came from this
+    # single stage, and turning the narration tie-break off did not move the
+    # number, because the tie-break was never the cause — asserting into a tie
+    # was.
+    require_unique_assignment: bool = True
+    # Narration-escalation: when amount+date is ambiguous, let a DECISIVE
+    # narration margin break the tie instead of refusing outright. Off by
+    # default — it is meaningless on synthetic data (unique amounts) and only
+    # earns its place on real data where narration carries the signal amount
+    # cannot. Thresholds measured on BenchRec, not guessed. See R3.4c.
+    narration_escalation: bool = False
+    narration_escalation_floor: float = 0.60
+    narration_escalation_margin: float = 0.15
     subset_sum_pool_cap: int = 40              # beyond this, refuse and except
     # A consolidated payout covers a RANGE of settlement dates, so the subset-sum
     # stage needs an asymmetric, wider look-back than the 1:1 rules. Measured:
@@ -114,6 +136,13 @@ def _within(a: int, b: int, tol: int) -> bool:
 def _expected_narration(s: Settlement) -> str:
     """What a clean narration for this payout would have looked like. The fuzzy
     layer scores the observed narration against this synthesised reference."""
+    # When the settlement carries real descriptive text (a ledger allocation
+    # string on real data), match the bank narration against THAT — it is what
+    # the narration actually resembles. Falls back to the synthesised Razorpay
+    # format when there is no descriptor, which is the synthetic case where the
+    # settlement id itself is the signal.
+    if s.descriptor:
+        return s.descriptor
     return f"NEFT CR-GATEWAYPAY-{s.settlement_id.upper()}-{s.utr or 'NOUTR'}-SETTLEMENT"
 
 
@@ -599,50 +628,200 @@ def match_settlements_bank(settlements: list[Settlement], bank: list[BankLine],
         rem_s = [s for s in settlements if s.settlement_id not in used_s]
         rem_b = [b for b in lines if b.txn_id not in used_b]
         if rem_s and rem_b:
-            C = np.full((len(rem_s), len(rem_b)), INFEASIBLE)
-            SIM = np.zeros((len(rem_s), len(rem_b)))
-            for i, s in enumerate(rem_s):
-                exp_narr = _expected_narration(s)
-                for j, b in enumerate(rem_b):
-                    if not _within(b.signed_paise, s.payout_paise, cfg.amount_tolerance_paise):
-                        continue
-                    if not in_window(s, b):
-                        continue
-                    gap = abs((b.value_date - s.settled_on).days)
-                    if cfg.fuzzy_narration:
-                        sim = resolver.similarity(b.narration, exp_narr)
-                        SIM[i, j] = sim
-                        C[i, j] = gap * 0.1 + (1.0 - sim) * 0.5
-                    else:
-                        C[i, j] = gap * 0.1
-            ri, ci = linear_sum_assignment(C)
-            for i, j in zip(ri, ci):
-                if C[i, j] >= INFEASIBLE:
+            # AMOUNT-BUCKET BLOCKING, exact rather than heuristic.
+            #
+            # A cell is feasible only when the amounts tie out within tolerance,
+            # so the bipartite graph is already disconnected across amount bands.
+            # An optimal assignment decomposes across connected components, so
+            # solving each band separately returns the identical answer to
+            # solving one dense matrix. This prunes work; it does not approximate.
+            #
+            # The dense matrix was never a problem on synthetic batches. First
+            # contact with a real 30k-row reconciliation asked numpy for a
+            # 29,905 x 21,770 array and 4.85 GiB — precisely the limitation the
+            # README documented and had never once exercised.
+            tol = cfg.amount_tolerance_paise
+            marks = sorted(
+                [(s.payout_paise, 0, i) for i, s in enumerate(rem_s)]
+                + [(b.signed_paise, 1, j) for j, b in enumerate(rem_b)])
+            components = []
+            cur_s, cur_b, prev_amt = [], [], None
+            for amt, side, idx in marks:
+                if prev_amt is not None and amt - prev_amt > tol:
+                    if cur_s and cur_b:
+                        components.append((cur_s, cur_b))
+                    cur_s, cur_b = [], []
+                (cur_s if side == 0 else cur_b).append(idx)
+                prev_amt = amt
+            if cur_s and cur_b:
+                components.append((cur_s, cur_b))
+
+            for si, bi in components:
+                sub_s = [rem_s[i] for i in si]
+                sub_b = [rem_b[j] for j in bi]
+                C = np.full((len(sub_s), len(sub_b)), INFEASIBLE)
+                SIM = np.zeros((len(sub_s), len(sub_b)))
+                any_feasible = False
+                for i, s in enumerate(sub_s):
+                    exp_narr = _expected_narration(s)
+                    for j, b in enumerate(sub_b):
+                        if not _within(b.signed_paise, s.payout_paise, tol):
+                            continue
+                        if not in_window(s, b):
+                            continue
+                        any_feasible = True
+                        gap = abs((b.value_date - s.settled_on).days)
+                        if cfg.fuzzy_narration:
+                            sim = resolver.similarity(b.narration, exp_narr)
+                            SIM[i, j] = sim
+                            C[i, j] = gap * 0.1 + (1.0 - sim) * 0.5
+                        else:
+                            C[i, j] = gap * 0.1
+                if not any_feasible:
                     continue
-                s, b = rem_s[i], rem_b[j]
-                feas = np.where(C[i, :] < INFEASIBLE)[0]
-                alts = int(len(feas))
-                if alts == 1:
-                    rule, conf = "R3.3_AMOUNT_DATE_UNIQUE", 0.93
-                elif cfg.fuzzy_narration:
-                    # Confidence is driven by the MARGIN between the chosen
-                    # candidate and the runner-up, not by the raw score. A high
-                    # similarity that every candidate shares is not evidence.
-                    sims = sorted((float(SIM[i, k]) for k in feas), reverse=True)
-                    margin = sims[0] - sims[1]
-                    resolver.note_tiebreak(margin)
-                    rule = "R3.4_NARRATION_TIEBREAK"
-                    conf = min(0.92, 0.55 + 0.8 * margin)
-                else:
-                    rule, conf = "R3.4_AMOUNT_DATE_ASSIGNMENT", max(0.40, 0.93 / alts)
-                matches.append(Match("L3_SETTLEMENT_BANK", s.settlement_id, [b.txn_id], rule, conf,
-                                     {"amount_paise": b.signed_paise,
-                                      "date_gap_days": (b.value_date - s.settled_on).days,
-                                      "competing_candidates": alts,
-                                      "narration_similarity": round(float(SIM[i, j]), 4),
-                                      "narration": b.narration}))
-                used_s.add(s.settlement_id)
-                used_b.add(b.txn_id)
+                ri, ci = linear_sum_assignment(C)
+                for i, j in zip(ri, ci):
+                    if C[i, j] >= INFEASIBLE:
+                        continue
+                    s, b = sub_s[i], sub_b[j]
+                    feas = np.where(C[i, :] < INFEASIBLE)[0]
+                    alts = int(len(feas))
+                    # BIDIRECTIONAL uniqueness, the same test R3.4b and the
+                    # subset-sum gate already apply. A pairing is only forced if
+                    # this ledger row has one feasible bank row AND that bank row
+                    # has one feasible ledger row. Anything else is the optimiser
+                    # breaking a tie on our behalf.
+                    back = int(len(np.where(C[:, j] < INFEASIBLE)[0]))
+                    if cfg.require_unique_assignment and (alts > 1 or back > 1):
+                        # NARRATION-ESCALATION before refusing.
+                        #
+                        # Amount+date is ambiguous here — that is why we are in
+                        # this branch. But narration may still decide it. Measured
+                        # on BenchRec's real held-out set: when N credits and N
+                        # ledger rows share an amount, narration similarity picks
+                        # the TRUE partner 74.3% of the time, wrong 18.9%. 74%
+                        # is enough to RANK but nowhere near enough to blindly
+                        # accept — 18.9% wrong would wreck the false-match rate.
+                        #
+                        # So narration is allowed to break the tie ONLY when its
+                        # margin over the runner-up is decisive. A clear winner is
+                        # promoted to a match; a close call keeps refusing. This
+                        # trades a controlled slice of abstention for coverage and
+                        # the threshold is what holds precision. Off unless
+                        # narration is actually available (fuzzy_narration on).
+                        promoted = False
+                        if (cfg.narration_escalation and cfg.fuzzy_narration
+                                and alts > 1):
+                            sims = sorted(
+                                ((float(SIM[i, k]), int(k)) for k in feas
+                                 if SIM[i, k] > 0),
+                                reverse=True)
+                            if len(sims) >= 2:
+                                top, runner = sims[0], sims[1]
+                                margin = top[0] - runner[0]
+                                if (top[0] >= cfg.narration_escalation_floor
+                                        and margin >= cfg.narration_escalation_margin):
+                                    bj = sub_b[top[1]]
+                                    # the winning credit must also see THIS ledger
+                                    # row as its own best narration match, or we
+                                    # are just picking a popular credit
+                                    col = [(float(SIM[ii, top[1]]), int(ii))
+                                           for ii in np.where(C[:, top[1]] < INFEASIBLE)[0]
+                                           if SIM[ii, top[1]] > 0]
+                                    col.sort(reverse=True)
+                                    if col and col[0][1] == i:
+                                        conf = min(0.90, 0.55 + 0.7 * margin)
+                                        matches.append(Match(
+                                            "L3_SETTLEMENT_BANK", s.settlement_id,
+                                            [bj.txn_id],
+                                            "R3.4c_NARRATION_RESOLVED_AMBIGUITY", conf,
+                                            {"amount_paise": bj.signed_paise,
+                                             "narration_similarity": round(top[0], 4),
+                                             "runner_up_similarity": round(runner[0], 4),
+                                             "margin": round(margin, 4),
+                                             "contenders": alts,
+                                             "narration": bj.narration}))
+                                        used_s.add(s.settlement_id)
+                                        used_b.add(bj.txn_id)
+                                        promoted = True
+                        if promoted:
+                            continue
+                        excs.append(Exception_(
+                            "settlement", s.settlement_id, Reason.AMBIGUOUS_ASSIGNMENT,
+                            f"{alts} bank candidate(s) for this payout and {back} "
+                            "payout candidate(s) for the chosen credit; the pairing "
+                            "an optimiser returns here is arbitrary",
+                            {"payout_paise": s.payout_paise,
+                             "forward_candidates": alts,
+                             "reverse_candidates": back,
+                             "would_have_matched": b.txn_id,
+                             "date_gap_days": (b.value_date - s.settled_on).days},
+                            confidence=0.0))
+                        # BUG FOUND EXTERNALLY, MEASURED PRECISELY: this refusal
+                        # marks b.txn_id used (below) but only ever filed the
+                        # exception against the SETTLEMENT side. On BenchRec's real
+                        # held-out set this meant 10,119 bank credits — 31.6% of
+                        # the entire scored set — were consumed by this branch and
+                        # left with NEITHER a match NOR any exception naming them
+                        # at all. An operator asking "why is this credit
+                        # unexplained" got nothing, even though the reason was
+                        # fully known internally the whole time. Confirmed exactly:
+                        # DUPLICATE_BANK_CREDIT + POOL_CAP_EXCEEDED +
+                        # UNEXPLAINED_BANK_CREDIT summed to precisely the "some
+                        # exception" count; AMBIGUOUS_ASSIGNMENT contributed zero
+                        # bank-side entries. "Every exception is auditable" is a
+                        # claim this project makes repeatedly; it was false for a
+                        # third of a real dataset's unmatched records. The fix
+                        # changes no match, no FMR, no coverage number — only
+                        # makes the exception ledger exhaustive, which is a
+                        # correctness requirement of its own.
+                        excs.append(Exception_(
+                            "bank_line", b.txn_id, Reason.AMBIGUOUS_ASSIGNMENT,
+                            f"this credit is the arbitrary optimiser choice for a "
+                            f"contested payout ({alts} bank candidate(s) competed for "
+                            f"it, {back} payout candidate(s) competed for this credit)",
+                            {"amount_paise": b.signed_paise,
+                             "forward_candidates": alts,
+                             "reverse_candidates": back,
+                             "contested_settlement": s.settlement_id,
+                             "narration": b.narration},
+                            confidence=0.0))
+                        used_s.add(s.settlement_id)
+                        used_b.add(b.txn_id)
+                        continue
+                    if alts == 1 and back == 1:
+                        rule, conf = "R3.3_AMOUNT_DATE_UNIQUE", 0.93
+                    elif alts == 1:
+                        # Bug found by disabling require_unique_assignment to build
+                        # the uncertified-baseline comparison: this row has exactly
+                        # one feasible candidate (nothing HERE to break a tie on),
+                        # but that candidate is contested by another row (back > 1).
+                        # The narration-tiebreak branch below assumes >= 2 candidates
+                        # in `feas` and crashed on `sims[1]` — unreachable for the
+                        # entire life of this repo because require_unique_assignment
+                        # defaults True and refuses this exact shape first. Disabling
+                        # the certificate must degrade gracefully, not crash: there is
+                        # nothing to compare narration against on this row, so
+                        # confidence is scaled by the CONTESTING side instead.
+                        rule, conf = "R3.4_AMOUNT_DATE_ASSIGNMENT_ROW_UNIQUE_CONTESTED", max(0.40, 0.93 / back)
+                    elif cfg.fuzzy_narration:
+                        sims = sorted((float(SIM[i, k]) for k in feas), reverse=True)
+                        margin = sims[0] - sims[1]
+                        resolver.note_tiebreak(margin)
+                        rule = "R3.4_NARRATION_TIEBREAK"
+                        conf = min(0.92, 0.55 + 0.8 * margin)
+                    else:
+                        rule, conf = "R3.4_AMOUNT_DATE_ASSIGNMENT", max(0.40, 0.93 / alts)
+                    matches.append(Match("L3_SETTLEMENT_BANK", s.settlement_id, [b.txn_id],
+                                         rule, conf,
+                                         {"amount_paise": b.signed_paise,
+                                          "date_gap_days": (b.value_date - s.settled_on).days,
+                                          "competing_candidates": alts,
+                                          "narration_similarity": round(float(SIM[i, j]), 4),
+                                          "narration": b.narration}))
+                    used_s.add(s.settlement_id)
+                    used_b.add(b.txn_id)
+
 
     def retire_duplicates() -> None:
         """Retire double-posted credits from the candidate pool.
@@ -884,16 +1063,17 @@ def match_settlements_bank(settlements: list[Settlement], bank: list[BankLine],
                                        confidence=0.0))
                 used_s.add(s.settlement_id)
                 continue
-            conf = max(0.60, 0.95 - 0.06 * (len(chosen) - 2))
-            matches.append(Match("L3_SETTLEMENT_BANK", s.settlement_id,
-                                 [b.txn_id for b in chosen],
-                                 f"R3.7_SUBSET_SUM_SPLIT_{len(chosen)}WAY", conf,
-                                 {"parts": [b.txn_id for b in chosen],
-                                  "group_size": len(chosen),
-                                  "parts_total_paise": sum(b.signed_paise for b in chosen),
-                                  "payout_paise": s.payout_paise,
-                                  "used_narration_hint": source is hinted,
-                                  "uniqueness_verified": True}))
+            # Refuse BEFORE asserting, mirroring the merged branch.
+            #
+            # This check used to run after matches.append(...), and the refusal
+            # path did `continue` without marking the tranche lines used. The
+            # already-appended match therefore survived while its bank lines fell
+            # through to residue, so one record came out of a single run both
+            # reconciled in matches.csv AND reported as money with no source in
+            # exceptions.csv. Every existing guard was blind to it: the windowed
+            # and full re-solve paths run the same engine, so cash drift and
+            # match-set symmetric difference both stayed at zero, and the
+            # generator rarely emits the split-with-twin shape.
             if cfg.refuse_contingent_subsets:
                 chosen_ids = {b.txn_id for b in chosen}
                 wanted = {b.signed_paise for b in chosen}
@@ -914,6 +1094,16 @@ def match_settlements_bank(settlements: list[Settlement], bank: list[BankLine],
                                            confidence=0.0))
                     used_s.add(s.settlement_id)
                     continue
+            conf = max(0.60, 0.95 - 0.06 * (len(chosen) - 2))
+            matches.append(Match("L3_SETTLEMENT_BANK", s.settlement_id,
+                                 [b.txn_id for b in chosen],
+                                 f"R3.7_SUBSET_SUM_SPLIT_{len(chosen)}WAY", conf,
+                                 {"parts": [b.txn_id for b in chosen],
+                                  "group_size": len(chosen),
+                                  "parts_total_paise": sum(b.signed_paise for b in chosen),
+                                  "payout_paise": s.payout_paise,
+                                  "used_narration_hint": source is hinted,
+                                  "uniqueness_verified": True}))
             span = (max(b.value_date for b in chosen)
                     - min(b.value_date for b in chosen)).days
             if span > cfg.split_long_window_days:
@@ -979,6 +1169,40 @@ def reconcile(data: dict[str, Any], cfg: MatcherConfig) -> Result:
                 m.rejected, confidence=m.confidence))
         else:
             kept.append(m)
+
+    # A withdrawn match must not leave contradictory residue behind.
+    #
+    # R3.4b deliberately drives confidence to 0.45 when a plausibly-short credit
+    # is not bidirectionally unique, so abstention withdraws it — correct. But the
+    # entities were never marked used, so residue also fired, and an operator saw
+    # three statements about one situation: "found a likely short credit",
+    # "no bank credit at all", and "credit with no source". The middle two
+    # contradict the first.
+    #
+    # Suppressed here rather than by marking the entities used inside the matcher,
+    # because consuming them would block later rules from matching them for real.
+    # This is a reporting correction with no recall cost by construction.
+    withdrawn_ids: set[str] = set()
+    for m in matches:
+        if m.confidence < cfg.confidence_threshold:
+            withdrawn_ids.add(m.left_id)
+            withdrawn_ids.update(m.right_ids)
+    contradictory = {Reason.SETTLEMENT_NOT_IN_BANK, Reason.UNEXPLAINED_BANK_CREDIT}
+    excs = [e for e in excs
+            if not (e.reason in contradictory and e.entity_id in withdrawn_ids)]
+
+    # Runtime invariant: no record may be simultaneously reconciled and reported
+    # as having no counterpart. This is the class of defect that cash-drift and
+    # match-set checks are structurally blind to, because the windowed and full
+    # re-solve paths run the same engine and therefore agree while both are wrong.
+    asserted_ids = {m.left_id for m in kept} | {r for m in kept for r in m.right_ids}
+    contradicted = sorted(
+        e.entity_id for e in excs
+        if e.reason in contradictory and e.entity_id in asserted_ids)
+    if contradicted:
+        raise AssertionError(
+            "contradictory ledger: record(s) both matched and reported without a "
+            f"counterpart: {contradicted[:5]}")
 
     elapsed = time.perf_counter() - t0
     n_records = sum(len(data[k]) for k in ("orders", "payments", "refunds", "settlements", "bank"))

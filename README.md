@@ -2,6 +2,10 @@
 
 **Multi-source settlement reconciliation with a measured residual instead of a protected zero.**
 
+> High precision under adversarial mutation and on real held-out data, with
+> measured residual and explicit coverage cost. Not yet a full
+> straight-through-processing system.
+
 Razorpay AI Buildathon — Track 04, AI Finance Controller.
 
 ```bash
@@ -19,10 +23,19 @@ No API key. No network. No model download. No notebook. Python 3.12.3.
 ```
 
 `./run.sh` regenerates every table below, offline, in about twelve minutes.
+CI runs the reconcile, the full test suite, the replay gate and the adversarial
+suite on Python 3.11 and 3.12 on every push, with no secrets configured — the
+claims here are only worth anything if a stranger's machine reproduces them.
 
 ---
 
 ## The precise claims
+
+Track 04 asks for an agent that closes **one** finance-ops loop across a **50+
+record batch**, reporting its **match rate** and the **exceptions it could not
+resolve**. The loop is multi-source reconciliation — gateway settlements against
+the bank statement. `--orders 50` produces 143 records across five ledgers;
+`--orders 300` produces 635; the command and the numbers are the same.
 
 | claim | measured |
 |---|---|
@@ -59,6 +72,150 @@ rate under broader damage, not a proof.
 > comparison and remain at zero. Nothing else in the scorer is relaxed.
 
 ---
+
+
+## Running on real data — BenchRec (ICAIF 2023)
+
+Everything above is synthetic. BenchRec (Operartis, ICAIF 2023 Benchmark
+Competition) is a real cash-reconciliation dataset, and it is the closest
+public artefact to this problem without being the problem this engine was
+built for.
+
+```bash
+python -m recon.benchrec_eval --data /path/to/benchrec   # external head-to-head
+python benchrec.py --data /path/to/benchrec --year 2023  # internal transfer test
+```
+
+### External head-to-head — BenchRec's own held-out set, BenchRec's own scoring
+
+`MatcherByChatGPT_submission.csv`, an ML-based matcher, already exists for this
+competition and was never touched. Scored under the identical rule for both
+systems — predict the ledger row's `A_allocation`, compare it character-for-
+character to `solution.csv`'s ground truth — on the genuine held-out
+`eval.csv`, no date filtering:
+
+| system | coverage | **FMR** |
+|---|---|---|
+| MatcherByChatGPT (external, unmodified) | 61.79% | 4.798% |
+| this engine, **naive** (no certificates, threshold = 0) | 68.45% | 13.251% |
+| **this engine, certified (shipped default)** | 47.29% | **0.105%** |
+
+Three real findings. First scoring attempt against the submission's own
+`targetAllocation` column gave 0/32,048 correct — a result that should never
+be reported without being questioned, and wasn't: that column turned out to be
+a JSON-wrapped string, not the bare label; `A_allocation` is the comparable
+field, verified by exact match before re-scoring. Second: the naive version of
+*this own engine* — no domain pruning beyond date/amount, no certificates, no
+abstention — is worse than the external ML baseline, 13.251% vs 4.798%.
+Third: confidence-gated abstention buys a **126× precision improvement**
+(13.251%→0.105%) over that naive baseline, landing **46× more precise** than
+the ML system, at a real and stated coverage cost (68.45%→47.29%). That
+trade — refuse rather than guess — is this project's whole thesis, and this is
+the first time it has been validated against a system this repo didn't write.
+
+**A fourth finding, from auditing the audit trail itself.** 31.6% of the
+held-out set — every bank credit that lost a contested 1:1 assignment — had
+neither a prediction nor any exception naming it: `AMBIGUOUS_ASSIGNMENT` was
+logged against the settlement side only. "Every exception is auditable" was
+false for a third of a real dataset. Fixed; verified identical match numbers
+before and after, since this only makes the exception ledger exhaustive.
+[FAILURE_LOG.md](FAILURE_LOG.md) #32.
+
+**Coverage on real data was attacked and the fix failed — reported, not buried.**
+The 47% BenchRec coverage decomposes into ~2k credits whose partner isn't in
+the pool (irreducible) and ~15k refused as genuinely ambiguous on amount+date.
+A narration-based tie-breaker (`R3.4c`, with a new `Settlement.descriptor`
+field so the fuzzy layer can compare against real ledger text) looked promising
+on a residual-pool probe — 74% — but live it scored 0% precision on the 8
+matches it promoted and pushed FMR 0.105%→0.152%. Reverted to default-off;
+[FAILURE_LOG.md](FAILURE_LOG.md) #34. Coverage on this dataset is closer to a
+real ambiguity floor than a fixable gap. The `rule_audit.py` below
+automatically flags `R3.4c` as harmful if it is ever re-enabled.
+
+**Domain-mismatch detection no longer requires a human reading a table.**
+`recon/rule_audit.py` computes per-rule precision against labelled data and
+flags a rule below bar with enough volume to be signal. Run retroactively
+against BenchRec with the withholding rule re-enabled, it flags
+`R3.4b_WITHHOLDING_RATE_MATCH` automatically — the exact bug found by hand in
+the previous finding, this time by the system itself. [FAILURE_LOG.md](FAILURE_LOG.md) #33.
+
+```bash
+python -m recon.rule_audit --data /path/to/benchrec   # flags harmful rules
+python -m recon.rule_audit --synthetic                # sanity: flags nothing
+```
+
+### Internal transfer test (`benchrec.py`, year=2023 slice of the training file)
+
+| | full harness bug | corrected |
+|---|---|---|
+| coverage | 77.18% | **46.83%** |
+| **false match rate** | 8.944% | **0.134%** |
+
+The first measurement bypassed `reconcile()`'s confidence-threshold withdrawal
+entirely — every uncertain tie-break was counted as asserted. Fixed, then one
+domain-mismatched rule was found and disabled: `R3.4b`'s Indian withholding
+rates fired 14 times on USD data and were wrong 11 of them, cut once removed
+(0.220%→0.134%, [FAILURE_LOG.md](FAILURE_LOG.md) #23–25). The remaining 17
+trace to two named mechanisms — undiscovered merge fragments, and settlement
+pairs split across the file's year boundary — the second of which I tried to
+fix and made worse when measured (0.134%→0.381%), so the fix was rejected
+rather than shipped. Full mechanism, and why "contingent uniqueness
+certification" doesn't explain any of this despite an external claim that it
+did: [FAILURE_LOG.md](FAILURE_LOG.md) #30–31.
+
+**What transfers, what does not.** Exact-identifier and withholding-rate
+layers are Razorpay-shaped and inert on anonymised foreign references. What
+transfers is the general core: Hungarian assignment under bidirectional
+uniqueness, duplicate clustering, confidence-gated abstention — and it holds
+its invariant by refusing rather than by being right more often.
+
+## The agent
+
+Reconciling once is not closing the books. A controller reconciles, looks at what
+did not resolve, decides which of those they can chase themselves and which need
+someone else, and escalates the rest with a specific ask. `recon/agent.py` runs
+that loop to a stopping condition.
+
+```bash
+python -m recon.agent --orders 300 --seed 7
+```
+
+```
+observe  →  triage the queue by cash at risk
+decide   →  the highest-value exception it has an unused policy for
+act      →  one of four bounded actions
+observe  →  did that reduce exposure? if not, revert
+repeat   →  until nothing remains it may act on
+```
+
+**The action space is deliberately narrow and none of it can create a match.**
+That is the design constraint, not a limitation: an agent that can force an
+attribution can manufacture a false match, and the false-match rate is the number
+this project exists to protect. Every attribution decision stays with the
+deterministic engine.
+
+| action | what it does |
+|---|---|
+| `RETRY_WIDER_WINDOW` | re-runs the same engine under wider date bounds; every gate still applies, so it can only find an attribution that was outside the window, never invent one |
+| `ACCEPT_EXPLAINED` | the exception is already explained — a shortfall at a plausible withholding rate, a duplicate already identified — so it closes with no money moving |
+| `WRITE_OFF_IMMATERIAL` | below the materiality threshold, and only for a record nothing depends on |
+| `ESCALATE_TO_HUMAN` | names the artefact a human has to fetch: "request the gateway breakup file", "raise a fee dispute". "Unresolved" is not an action |
+
+Measured, 300 orders, seed 7: terminates in 27 steps on *"no exception remains
+that the agent may act on"*, net exposure change **₹0.00**, actions that raised
+exposure **0**, decision chain verified, log cash equals state cash.
+
+**Three write-off policies in a row made the books worse, and the third one is
+why the invariant exists.** Writing off a bank credit strands the settlement it
+would have matched. Writing off a settlement strands its credit. And a
+`BATCH_ARITHMETIC_MISMATCH` is a *dispute about an amount*, not a failure of
+attribution — the settlement it names is usually reconciled perfectly well, so
+closing it by removing the record destroys a good match. One such write-off
+raised exposure by ₹1.99 lakh in a single step at 50 orders. The rule that
+survived: write-off is valid only for a record that carries no live attribution
+and whose complaint is not arithmetic. `test_agent_never_raises_net_exposure`
+pins it.
+
 
 ## Five things worth knowing
 
@@ -305,7 +462,7 @@ blocking data, candidates considered, and a suggested action.
 
 ## Tests
 
-**106 tests**: `python -m pytest tests/`
+**119 tests**: `python -m pytest tests/`
 
 **Unit** — money parsing across Indian/western/accounting formats, half-up
 rounding, refusal to coerce garbage to zero, pristine-data perfection, determinism,
@@ -323,7 +480,7 @@ bugs that have no oracle:
 | amount reformatting (lakh ↔ western ↔ `INR n.nn`) | format-dependent parsing at the boundary |
 | all amounts × 10 | an absolute magnitude baked into a rule threshold |
 | append a fully-refunded capture netting to zero | state leaking across candidates |
-| matched ∩ unexplained = ∅ | the report double-counts |
+| matched ∩ unexplained = ∅ | the report double-counts — now also a runtime assertion in `reconcile()`, swept across 30 seed/mode combinations |
 
 **Live** — hash-chain tamper and reorder detection, bit-identical replay as a hard
 gate, windowed re-solve equals full re-solve, cash drift exactly zero,
@@ -335,115 +492,13 @@ retirement, pool-cap refusal, and a zero-tolerance ceiling on adversarial FMR.
 
 ## What broke, and how I got out
 
-1. **The first run reported 100% and I did not believe it.** Seed 7 was luck; the
-   40-seed sweep showed min 73.08% and FMR up to 9.09%.
-2. **The generator injected an anomaly it did not label.** Wrong-fee injection left
-   GST derived from the old fee, so the detector correctly raised six
-   `GST_MISMATCH` and the evaluator scored them spurious. The detector was right;
-   the truth was wrong.
-3. **Ground truth demanded exceptions that should not exist.** Failed orders were
-   labelled `ORDER_NO_PAYMENT`; no money moved, so they are not reconciliation
-   exceptions.
-4. **My own fix became the worst bug in the system.** R3.4b accepted the unique
-   candidate within a 5% band and produced *every* false match, up to 9% FMR.
-   Fixed by replacing the tolerance with a domain constraint: a shortfall is
-   withholding, and withholding happens at *rates* (0.1/1/2/5% ±2bp), with
-   uniqueness required in both directions.
-5. **The AI layer contributed exactly zero, and I shipped that finding.**
-   `residual_seen: 0` across 80 runs — the fuzzy rule required an exact amount
-   match in-window, but any such candidate was already consumed upstream.
-   Unreachable code that would have shipped as "AI-powered matching" on a slide.
-6. **An engine that only reads credits loses money.** A batch whose refunds exceed
-   captures has a negative payout; the gateway *debits* to recover it. The
-   `credit_paise > 0` filter silently dropped every recovery debit.
-7. **Two real exceptions annihilated into one false match.** A payout that never
-   landed and a duplicated credit differed by ~1%, so the withholding rule linked
-   them — making missing money look reconciled. Fixed by ordering.
-8. **A corrupted identifier is not a surviving identifier.** `SETL_0019` garbled to
-   `SETL_0009`; the regex extracted a genuinely valid id and the engine
-   confidently matched the wrong settlement.
-9. **I documented a limitation I had never tested.** The generator had never
-   produced a group larger than 2, so the k=3 bound had never once been exercised.
-   Testing it revealed a 59-point recall hole — and then that the bound was not
-   even the real constraint; the date window was.
-10. **The old subset-sum returned the first subset that hit the target.** Two
-    subsets summing to one credit is a coin flip dressed as a match. Latent at
-    k=3, fatal at k=8.
-11. **The engine was right and my ground truth was wrong.** Under rolling reserves
-    the engine paired the short credit with the later release credit; the payout
-    genuinely arrived in two tranches summing to exactly P. What it legitimately
-    owed was a signal that working capital had been held, so
-    `SPLIT_SPANS_LONG_WINDOW` was added and the label corrected. Distinguishing
-    "my system is wrong" from "my measurement is wrong" was the hardest judgement
-    in the build.
-12. **Mixing signs in subset-sum conscripts chargebacks into explaining payouts.**
-    Sign-partitioned: a credit is explained only by positive payouts.
-13. **The window closure exploded into a full re-solve wearing a costume.** Every
-    pulled-in match re-applied the full ±16-day margin, so the window saturated at
-    629 of 647 records within two iterations.
-14. **A contested identifier was resolved first-wins.** A near-duplicate whose
-    narration differs in its last character leaves the UTR intact, so both credits
-    legitimately claim the same settlement and the engine matched whichever it
-    reached first.
-15. **That fix cost 6 points of match rate before it gained any.** Retiring every
-    losing contender broke split payouts, whose halves *legitimately* share an
-    identifier. A contender is a duplicate only if it also ties out to the full
-    payout.
-16. **Mutations that read ground truth are not replayable.** Truth is a measurement
-    artifact, not an input, so replay starts with an empty one and those operators
-    silently became no-ops — the event streams diverged at the very first window.
-17. **Overrides cannot be planned in advance.** A later mutation usually resolves
-    whatever was flagged at planning time, and the safety check then correctly
-    refuses. Plans now carry override *slots* resolved against live state.
-18. **A 1-paise mutation desynchronised the immutable log from the ledger it
-    claims to record.** The position was sampled *after* the mutation was applied,
-    so the mutation's own effect fell into a gap no event covered; the log
-    under-reported by exactly the mutation delta, at every magnitude. The replay
-    verifier compared state to state and ratified it. Every retirement also
-    carried `cash_delta = 0` and no reason code.
-19. **My UTR veto was an over-correction.** Added to stop two unrelated
-    consolidated payouts (which read 0.9767 alike) being clustered, it was written
-    as an unconditional override. A split tranche narrates as `…-PART-<UTR>`, so a
-    one-character corruption lands *inside* the UTR — and the veto then blocked
-    clustering of a phantom that shared the settlement id, the exact amount, and
-    97% of the narration.
-20. **Duplicate clustering was star-shaped, not pairwise.** With three lines in a
-    bucket — two legitimate split halves plus a phantom of one of them — the
-    earliest line was the *other* half, dissimilar to both, so the pair that
-    actually matched was never compared. That single blind spot was the last
-    engine false match on the 10-class suite.
-21. **The window was a date interval, not a record set.** Closure was a side effect
-    of arithmetic on dates rather than a property of the graph. Rewriting it as a
-    hop-limited closure and asserting it at runtime immediately caught two things
-    no cash or FMR check would have: matches referencing records a mutation had
-    deleted, and mutations that delete their own seed (10% of all windows were
-    falling back to whole-batch for that reason alone).
-22. **Override isolation leaked, twice.** A UTR exclusion is global but was applied
-    only inside the override's window, so a re-posting matched earlier kept its
-    match. And the leak check inspected only newly-asserted matches, so one that
-    *predated* the override survived. Both showed as cash drift of lakhs.
-23. **Expanding the generator broke the zero, and that was the point.** Six new
-    classes took adversarial FMR from 0.0000% to **6.72%**. Six of eight failures
-    came from a phantom that posts a day *before* the credit it copies: "keep the
-    earliest" is a heuristic with no basis, and it made the phantom the survivor
-    while the real credit was retired. Replaced with a domain rule — a payout
-    cannot land before it is instructed.
-24. **A phantom can differ on two axes at once.** Short by exactly a plausible
-    withholding rate *and* one character of the reference, defeating amount
-    clustering, UTR clustering, and shaped to be accepted by the withholding-rate
-    gate. Now clustered on that signature directly.
-25. **Hitting the candidate-pool cap was a silent skip.** The target fell through
-    to the generic residue path and was reported as an ordinary unexplained credit,
-    leaving an operator unable to tell "nothing explains this" from "too many
-    candidates to decide safely."
-26. **I asserted a trade-off instead of measuring it.** I documented the
-    single-claim contingency rule as "specified and deliberately not shipped"
-    because it would cost too much recall. Measured, it costs **exactly zero** on
-    all four static modes. That is the same error as documenting an untested
-    limitation (#9), made a second time, and it is why every threshold in this repo
-    is now a measured number.
-
----
+29 entries, kept chronologically, moved to [FAILURE_LOG.md](FAILURE_LOG.md) so
+this file stays skimmable. Three worth reading first if you read nothing else:
+**#9** — a documented limitation had never actually been tested and cost 59
+points of recall once it was. **#11** — the engine was right and the ground
+truth was wrong; correcting that, not the code, was the fix. **#26** — testing
+someone else's claim about this system's own architecture found a crash bug
+that had been unreachable for the project's entire life.
 
 ## Generative assumptions
 
@@ -474,10 +529,26 @@ transfer.
 
 - **Not zero false matches under arbitrary damage.** 2.50% on the 16-class suite,
   and that is a floor, not a proof.
-- **Not validated on real data.** The generator models a payments business and then
-  damages the exports; it does not know about the matcher, so the evaluation is not
-  circular — but it is still a closed set of anomalies. The first real bank export
-  will produce something none of the sixteen classes anticipates.
+- **Validated on one real dataset, with a coverage cost.** BenchRec (ICAIF 2023):
+  0.134% FMR at 46.83% coverage, after disabling a Razorpay-specific rule
+  measured harmful on foreign-currency data. Precision transfers; coverage does
+  not, because BenchRec's amounts are not near-unique the way this engine's
+  generator makes them. Residual is not a single bucket: undiscovered merge
+  groups colliding with unrelated small transactions, and settlement pairs
+  split across a year boundary by the test harness. A wider data window was
+  tested as a fix for the second class and made the first class worse — 0.381%
+  at 50.99% coverage — so it was rejected rather than shipped. The generator's
+  own synthetic anomalies remain a closed set regardless of any of this — a
+  different real institution's export will still produce something neither
+  BenchRec nor the sixteen classes anticipates.
+- **No head-to-head against a generic subset-sum solver.** The Subset Sum
+  Matching Problem (Wu et al., J.P. Morgan AI Research, ECAI 2025, arXiv:2508.19218)
+  formalises this exact problem and shows their DP solver dominates
+  meet-in-the-middle above n≈20. Read in full; not implemented as a comparison
+  baseline. If run against their benchmark this engine would lose on raw solver
+  speed — the claim here has never been speed, and reporting it as one without
+  the comparison built would be exactly the kind of unmeasured assertion this
+  repo exists to refuse.
 - **Not fine-grained incremental maintenance of a global constraint graph.** The
   unit of recomputation is a closed date-anchored record set.
 - **Not immunity to arbitrary adversarial human action.** Overrides are *isolated*;
@@ -489,6 +560,15 @@ transfer.
   most of it. It falls to ~12% of the batch at a 180-day horizon.
 - **Not production controller software.** No exception ageing, no forced *positive*
   match with downstream re-solve, no multi-account or multi-currency support.
+- **Not a cash forecaster.** The brief lists forward cash forecasting as one of
+  four possible directions; this took multi-source reconciliation and closed it
+  fully instead. The cash position reported is the **reconciled** one and the
+  exposure figure is **unexplained money today** — neither is a projection.
+- **The agent's revert is not bit-exact.** When a widened search does not reduce
+  exposure the agent re-solves under the original bounds, which restores net
+  position, but duplicate determinations pinned during the widened pass persist.
+  Under heavy unmodeled damage this shows as 9 transient per-action exposure
+  rises with a net change of zero; the run reports the count rather than hiding it.
 - **Not benchmarked with an LLM in the loop.** No API key in the build
   environment, so the optional path's lift over local scoring is unmeasured and
   reported as unmeasured rather than estimated.
@@ -513,12 +593,15 @@ recon/
   mutations.py    16 replayable mutation operators (data effect is truth-free)
   report.py       run.json, exceptions.csv, matches.csv, close_report.html
   cli.py          single command, cold start
+  agent.py        observe, decide, act, escalate; bounded action space
 replay.py         the replay gate: re-derive from inputs, require bit-identical
 mutate.py         adversarial mutation + safe-override harness
+                  --fail-fast: stop at the first invariant violation, per-step,
+                  instead of an aggregate at the end (which step, which rule)
 benchmark.py      every static evidence table
 ai_contribution.py  isolated measurement of the AI layer
 stress.py         the original 200-configuration sweep
-tests/            106 tests
+tests/            119 tests
 run.sh            everything, offline, ~12 minutes
 ```
 

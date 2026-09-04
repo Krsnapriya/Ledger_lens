@@ -1,0 +1,55 @@
+The repo is already initialised, staged, and pointed at your remote.
+Two commands to publish.
+
+  1) Identify yourself, so the commit is authored by you:
+
+     git config user.name  "Krsnapriya"
+     git config user.email "you@example.com"        <- the email on your GitHub account
+
+  2) Commit and push:
+
+     git commit -m "LedgerLens: settlement reconciliation with a measured residual"
+     git push -u origin main
+
+If the password prompt appears, GitHub wants a personal access token, not your
+account password:
+  github.com -> Settings -> Developer settings -> Personal access tokens ->
+  Fine-grained -> repo Ledger_lens -> Contents: Read and write
+
+Or skip tokens entirely:
+     gh auth login
+     git push -u origin main
+
+If the remote already has commits and the push is rejected:
+     git pull --rebase origin main
+     git push -u origin main
+Do not force-push unless you are certain the remote holds nothing you want.
+
+BEFORE YOU PUSH
+  [ ] LICENSE — replace <YOUR NAME> with your name.
+  [ ] Decide whether to keep SUBMISSION.md (your form answers + video script).
+      Harmless to keep; it shows your working, which suits this repo.
+      To drop it:  git rm --cached SUBMISSION.md && rm SUBMISSION.md
+  [ ] Delete this file:  rm NEXT_STEPS.txt   (it is not staged, so it will not
+      be committed either way)
+
+AFTER YOU PUSH
+  [ ] Actions tab -> the "ci" workflow must go green on Python 3.11 and 3.12.
+      This is the most valuable thing on the repo page: a machine that is not
+      yours reproducing your numbers, on every push, with no secrets. A red CI
+      is worse than no CI — fix it before you submit the link.
+  [ ] Description:
+      Multi-source settlement reconciliation with a measured residual instead of
+      a protected zero. Zero engine false matches in-distribution; 2.5% under an
+      adversarial suite built to attack its own rules.
+  [ ] Topics: reconciliation fintech payments constraint-solving
+      assignment-problem subset-sum auditability determinism
+  [ ] Open the repo on your phone. First screen should be the command, the
+      claims table, and the oracle blockquote.
+
+DO NOT
+  - Fabricate a multi-week commit history. One clean commit is normal for work
+    developed elsewhere and then published. An invented history is exactly the
+    thing that unravels in a panel, and it would undercut the honesty this
+    submission runs on.
+  - Commit artifacts/decisions.jsonl (a ~20 MB generated event log).

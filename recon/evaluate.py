@@ -16,7 +16,6 @@ Design notes that matter more than the code:
    actually ask: "at what level of automation does this stop being safe?"
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field

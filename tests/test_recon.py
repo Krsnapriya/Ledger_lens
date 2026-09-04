@@ -294,3 +294,78 @@ def test_subset_sum_returns_distinct_solutions_not_repeats():
     sols = subsetsum.subset_sum([5, 7, 11], 12, max_k=3, tol=0, solution_cap=2)
     assert len(sols) == 1
     assert len({tuple(sorted(s)) for s in sols}) == len(sols)
+
+
+# ============ external review regressions — contradictory ledger ==============
+def test_contingent_split_refuses_before_asserting():
+    """The split branch used to append the match and THEN run the contingency
+    check, continuing without marking the tranche lines used. The already-asserted
+    match survived while its bank lines fell through to residue, so one record was
+    simultaneously reconciled in matches.csv and reported as money with no source
+    in exceptions.csv. The merged branch always checked first; the split branch
+    now mirrors it."""
+    from datetime import date
+    from recon.models import BankLine, Settlement
+    from recon.match import match_settlements_bank, MatcherConfig
+    from recon.ai import SemanticResolver
+
+    s = Settlement("setl_0700", date(2026, 4, 5), 700_000, "UTR700000000000")
+    c1 = BankLine("bank_c1", date(2026, 4, 5),
+                  "NEFT CR-GATEWAYPAY-SETL_0700-PART-UTR111111111111", 300_000, 0)
+    c2 = BankLine("bank_c2", date(2026, 4, 5),
+                  "NEFT CR-GATEWAYPAY-SETL_0700-PART-UTR222222222222", 400_000, 0)
+    twin = BankLine("bank_tw", date(2026, 4, 5),
+                    "NEFT CR-OTHERSRC-DIRECT-UTR333333333333", 300_000, 0)
+
+    ms, ex = match_settlements_bank([s], [c1, c2, twin], MatcherConfig(),
+                                    SemanticResolver(use_llm=False))
+    codes = {(e.entity_id, e.reason.value) for e in ex}
+    matched = {t for m in ms if m.layer == "L3_SETTLEMENT_BANK" for t in m.right_ids}
+    assert ("setl_0700", "DUPLICATE_CLAIM") in codes
+    assert not matched, "a contingent split was asserted despite being refused"
+    assert not [t for t in matched if (t, "UNEXPLAINED_BANK_CREDIT") in codes]
+
+
+def test_no_record_is_both_matched_and_reported_without_a_counterpart():
+    """The general invariant behind the bug above. Cash-drift and match-set checks
+    are structurally blind to it: the windowed and full re-solve paths run the
+    same engine, so they agree while both are wrong."""
+    import json as _json
+    import tempfile as _tf
+    from pathlib import Path as _P
+    from recon import generate as _gen, normalize as _norm
+    from recon.match import MatcherConfig, reconcile
+
+    contradictory = {"SETTLEMENT_NOT_IN_BANK", "UNEXPLAINED_BANK_CREDIT"}
+    for seed in range(1, 11):
+        for kw in ({}, {"multiway": 1.0}, {"unmodeled": 2.0}):
+            d = _P(_tf.mkdtemp())
+            _gen.write(_gen.generate(200, seed, 1.0, **kw), d)
+            data, _ = _norm.load_all(d)
+            r = reconcile(data, MatcherConfig())
+            asserted = ({m.left_id for m in r.matches}
+                        | {x for m in r.matches for x in m.right_ids})
+            bad = [e.entity_id for e in r.exceptions
+                   if e.reason.value in contradictory and e.entity_id in asserted]
+            assert not bad, f"seed {seed} {kw}: contradictory ledger for {bad[:3]}"
+
+
+def test_withdrawn_match_leaves_no_contradictory_residue():
+    """A withheld low-confidence match must not also produce "no bank credit at
+    all" and "credit with no source" for the same records — three statements
+    about one situation, two of which contradict the first."""
+    from datetime import date
+    from recon.models import BankLine, Settlement
+    from recon.match import MatcherConfig, reconcile
+
+    s1 = Settlement("setl_1000001", date(2026, 4, 5), 1_000_000, None)
+    s2 = Settlement("setl_1000002", date(2026, 4, 5), 1_000_000, None)
+    b = BankLine("bank_x", date(2026, 4, 6),
+                 "NEFT CR-GATEWAYPAY-PAYOUT-SETTLEMENT", 990_000, 0)
+    r = reconcile({"orders": [], "payments": [], "refunds": [],
+                   "settlements": [s1, s2], "bank": [b]}, MatcherConfig())
+    codes = {(e.entity_id, e.reason.value) for e in r.exceptions}
+    assert any(c == "BELOW_CONFIDENCE_THRESHOLD" for _, c in codes)
+    assert ("bank_x", "UNEXPLAINED_BANK_CREDIT") not in codes
+    assert ("setl_1000001", "SETTLEMENT_NOT_IN_BANK") not in codes
+    assert ("setl_1000002", "SETTLEMENT_NOT_IN_BANK") not in codes
