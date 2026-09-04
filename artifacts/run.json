@@ -1,0 +1,336 @@
+{
+  "schema_version": "1.0.0",
+  "python": "3.12.3",
+  "run_id": "20260904T144225Z",
+  "generated_at": "2026-09-04T14:42:25+00:00",
+  "seed": 7,
+  "difficulty": 1.0,
+  "dataset": "data",
+  "config": {
+    "exact_ids": true,
+    "tolerance_window": true,
+    "fuzzy_narration": true,
+    "subset_sum": true,
+    "use_llm": false,
+    "confidence_threshold": 0.7,
+    "date_window_days": 4,
+    "amount_tolerance_paise": 100,
+    "short_credit_tolerance_bp": 500,
+    "plausible_withholding_bp": [
+      10,
+      100,
+      200,
+      500
+    ],
+    "max_subset_size": 8,
+    "max_split_size": 5,
+    "refuse_contingent_subsets": true,
+    "require_unique_assignment": true,
+    "narration_escalation": false,
+    "narration_escalation_floor": 0.6,
+    "narration_escalation_margin": 0.15,
+    "subset_sum_pool_cap": 40,
+    "subset_sum_lookback_days": 16,
+    "subset_sum_lookahead_days": 4,
+    "window_hop_limit": 4,
+    "split_long_window_days": 3,
+    "duplicate_similarity": 0.8,
+    "duplicate_date_days": 1,
+    "fuzzy_min_similarity": 0.55
+  },
+  "throughput": {
+    "records_ingested": 635,
+    "wall_clock_s": 0.0023,
+    "records_per_second": 278484.0,
+    "matches_asserted": 285,
+    "matches_withdrawn_by_threshold": 0,
+    "exceptions": 27,
+    "by_rule": {
+      "R1.1_EXACT_PAYMENT_ID": 228,
+      "R1.2_EXACT_ORDER_REF": 26,
+      "R1.4_AMOUNT_DATE_ASSIGNMENT": 6,
+      "R3.1_SETTLEMENT_ID_IN_NARRATION": 14,
+      "R3.2_UTR_MATCH": 5,
+      "R3.2_UTR_MATCH_WITH_SHORTFALL": 2,
+      "R3.4b_WITHHOLDING_RATE_MATCH": 1,
+      "R3.6_SUBSET_SUM_MERGED_2WAY": 2,
+      "R3.7_SUBSET_SUM_SPLIT_2WAY": 1
+    }
+  },
+  "match_rate": {
+    "settlement_bank_pairs_in_truth": 26,
+    "settlement_bank_pairs_asserted": 26,
+    "settlement_bank_pairs_correct": 26,
+    "settlements_expected_to_land": 25,
+    "settlements_correctly_reconciled": 25,
+    "settlement_match_rate_pct": 100.0,
+    "false_match_rate_pct": 0.0
+  },
+  "match_scores": {
+    "L1_order_payment": {
+      "tp": 260,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_match_rate": 0.0
+    },
+    "L3_settlement_bank": {
+      "tp": 26,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_match_rate": 0.0
+    },
+    "L3_by_difficulty_tier": {
+      "tier_1": {
+        "tp": 13,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "false_match_rate": 0.0,
+        "truth_pairs": 13
+      },
+      "tier_2": {
+        "tp": 8,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "false_match_rate": 0.0,
+        "truth_pairs": 8
+      },
+      "tier_3": {
+        "tp": 5,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "false_match_rate": 0.0,
+        "truth_pairs": 5
+      }
+    },
+    "false_matches_sample": []
+  },
+  "exception_scores": {
+    "all_classes": {
+      "tp": 27,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_match_rate": 0.0
+    },
+    "excluding_trivial_ORDER_NO_PAYMENT": {
+      "tp": 27,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_match_rate": 0.0
+    },
+    "abstentions_routed_to_human": 0,
+    "by_reason_code": {
+      "AMOUNT_MISMATCH": {
+        "expected": 3,
+        "predicted": 3,
+        "correct": 3,
+        "missed": 0,
+        "spurious": 0
+      },
+      "BATCH_ARITHMETIC_MISMATCH": {
+        "expected": 1,
+        "predicted": 1,
+        "correct": 1,
+        "missed": 0,
+        "spurious": 0
+      },
+      "FEE_RATE_MISMATCH": {
+        "expected": 6,
+        "predicted": 6,
+        "correct": 6,
+        "missed": 0,
+        "spurious": 0
+      },
+      "GST_MISMATCH": {
+        "expected": 7,
+        "predicted": 7,
+        "correct": 7,
+        "missed": 0,
+        "spurious": 0
+      },
+      "PAYMENT_NO_ORDER": {
+        "expected": 3,
+        "predicted": 3,
+        "correct": 3,
+        "missed": 0,
+        "spurious": 0
+      },
+      "SETTLEMENT_NOT_IN_BANK": {
+        "expected": 3,
+        "predicted": 3,
+        "correct": 3,
+        "missed": 0,
+        "spurious": 0
+      },
+      "UNEXPLAINED_BANK_CREDIT": {
+        "expected": 4,
+        "predicted": 4,
+        "correct": 4,
+        "missed": 0,
+        "spurious": 0
+      }
+    },
+    "missed_sample": [],
+    "spurious_sample": []
+  },
+  "abstention_curve": [
+    {
+      "threshold": 0.0,
+      "asserted": 286,
+      "coverage": 1.0,
+      "precision": 1.0,
+      "false_match_rate": 0.0,
+      "sent_to_human": 0
+    },
+    {
+      "threshold": 0.35,
+      "asserted": 286,
+      "coverage": 1.0,
+      "precision": 1.0,
+      "false_match_rate": 0.0,
+      "sent_to_human": 0
+    },
+    {
+      "threshold": 0.5,
+      "asserted": 286,
+      "coverage": 1.0,
+      "precision": 1.0,
+      "false_match_rate": 0.0,
+      "sent_to_human": 0
+    },
+    {
+      "threshold": 0.7,
+      "asserted": 286,
+      "coverage": 1.0,
+      "precision": 1.0,
+      "false_match_rate": 0.0,
+      "sent_to_human": 0
+    },
+    {
+      "threshold": 0.85,
+      "asserted": 285,
+      "coverage": 0.9965,
+      "precision": 1.0,
+      "false_match_rate": 0.0,
+      "sent_to_human": 1
+    },
+    {
+      "threshold": 0.9,
+      "asserted": 279,
+      "coverage": 0.9755,
+      "precision": 1.0,
+      "false_match_rate": 0.0,
+      "sent_to_human": 7
+    },
+    {
+      "threshold": 0.95,
+      "asserted": 279,
+      "coverage": 0.9755,
+      "precision": 1.0,
+      "false_match_rate": 0.0,
+      "sent_to_human": 7
+    },
+    {
+      "threshold": 0.99,
+      "asserted": 273,
+      "coverage": 0.9545,
+      "precision": 1.0,
+      "false_match_rate": 0.0,
+      "sent_to_human": 12
+    }
+  ],
+  "ingest_rejects": [],
+  "value": {
+    "gross_captured": 557596087,
+    "payout_declared": 532436888,
+    "bank_credits": 482934593,
+    "unreconciled_exposure": 62063343,
+    "exception_cash_at_risk": 64646266
+  },
+  "ai": {
+    "backend": "local-chargram",
+    "residual_seen": 0,
+    "accepted": 0,
+    "rejected_by_constraint": 0,
+    "tiebreaks_invoked": 0,
+    "tiebreak_margins": [],
+    "similarity_scores_computed": 0,
+    "llm_calls": 0,
+    "llm_errors": 0,
+    "notes": []
+  },
+  "ablation": [
+    {
+      "config": "A_exact_ids_only",
+      "layers": "exact_ids",
+      "settlement_bank_pairs_in_truth": 26,
+      "settlement_bank_pairs_asserted": 21,
+      "settlement_bank_pairs_correct": 21,
+      "settlements_expected_to_land": 25,
+      "settlements_correctly_reconciled": 21,
+      "settlement_match_rate_pct": 84.0,
+      "false_match_rate_pct": 0.0,
+      "exceptions": 46,
+      "wall_clock_s": 0.0015
+    },
+    {
+      "config": "B_plus_amount_date",
+      "layers": "exact_ids,tolerance_window",
+      "settlement_bank_pairs_in_truth": 26,
+      "settlement_bank_pairs_asserted": 22,
+      "settlement_bank_pairs_correct": 22,
+      "settlements_expected_to_land": 25,
+      "settlements_correctly_reconciled": 22,
+      "settlement_match_rate_pct": 88.0,
+      "false_match_rate_pct": 0.0,
+      "exceptions": 33,
+      "wall_clock_s": 0.0016
+    },
+    {
+      "config": "C_plus_fuzzy_narration",
+      "layers": "exact_ids,tolerance_window,fuzzy_narration",
+      "settlement_bank_pairs_in_truth": 26,
+      "settlement_bank_pairs_asserted": 22,
+      "settlement_bank_pairs_correct": 22,
+      "settlements_expected_to_land": 25,
+      "settlements_correctly_reconciled": 22,
+      "settlement_match_rate_pct": 88.0,
+      "false_match_rate_pct": 0.0,
+      "exceptions": 33,
+      "wall_clock_s": 0.0016
+    },
+    {
+      "config": "D_plus_subset_sum_full",
+      "layers": "exact_ids,tolerance_window,fuzzy_narration,subset_sum",
+      "settlement_bank_pairs_in_truth": 26,
+      "settlement_bank_pairs_asserted": 26,
+      "settlement_bank_pairs_correct": 26,
+      "settlements_expected_to_land": 25,
+      "settlements_correctly_reconciled": 25,
+      "settlement_match_rate_pct": 100.0,
+      "false_match_rate_pct": 0.0,
+      "exceptions": 27,
+      "wall_clock_s": 0.0016
+    }
+  ]
+}

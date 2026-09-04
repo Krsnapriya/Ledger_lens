@@ -1,0 +1,1177 @@
+{
+  "order_to_payment": {
+    "order_00000": "pay_00000a",
+    "order_00001": "pay_00001b",
+    "order_00002": "pay_00002g",
+    "order_00003": "pay_00003e",
+    "order_00004": "pay_00004d",
+    "order_00005": "pay_00005c",
+    "order_00006": "pay_00006b",
+    "order_00007": "pay_00007b",
+    "order_00008": "pay_00008h",
+    "order_00009": "pay_00009h",
+    "order_00010": "pay_00010h",
+    "order_00012": "pay_00012g",
+    "order_00015": "pay_00015c",
+    "order_00016": "pay_00016g",
+    "order_00019": "pay_00019a",
+    "order_00020": "pay_00020b",
+    "order_00022": "pay_00022c",
+    "order_00023": "pay_00023e",
+    "order_00024": "pay_00024f",
+    "order_00025": "pay_00025d",
+    "order_00026": "pay_00026f",
+    "order_00027": "pay_00027d",
+    "order_00028": "pay_00028b",
+    "order_00029": "pay_00029f",
+    "order_00030": "pay_00030c",
+    "order_00031": "pay_00031f",
+    "order_00032": "pay_00032d",
+    "order_00033": "pay_00033a",
+    "order_00034": "pay_00034c",
+    "order_00035": "pay_00035h",
+    "order_00036": "pay_00036a",
+    "order_00037": "pay_00037b",
+    "order_00038": "pay_00038h",
+    "order_00039": "pay_00039b",
+    "order_00040": "pay_00040c",
+    "order_00041": "pay_00041b",
+    "order_00042": "pay_00042g",
+    "order_00043": "pay_00043a",
+    "order_00044": "pay_00044b",
+    "order_00045": "pay_00045e",
+    "order_00047": "pay_00047a",
+    "order_00048": "pay_00048f",
+    "order_00049": "pay_00049b",
+    "order_00050": "pay_00050c",
+    "order_00051": "pay_00051d",
+    "order_00052": "pay_00052e",
+    "order_00053": "pay_00053a",
+    "order_00054": "pay_00054e",
+    "order_00056": "pay_00056e",
+    "order_00057": "pay_00057d",
+    "order_00058": "pay_00058e",
+    "order_00059": "pay_00059h",
+    "order_00060": "pay_00060a",
+    "order_00061": "pay_00061f",
+    "order_00062": "pay_00062h",
+    "order_00063": "pay_00063b",
+    "order_00065": "pay_00065d",
+    "order_00067": "pay_00067h",
+    "order_00068": "pay_00068b",
+    "order_00069": "pay_00069d",
+    "order_00070": "pay_00070b",
+    "order_00072": "pay_00072c",
+    "order_00073": "pay_00073b",
+    "order_00074": "pay_00074b",
+    "order_00075": "pay_00075e",
+    "order_00076": "pay_00076g",
+    "order_00078": "pay_00078e",
+    "order_00079": "pay_00079e",
+    "order_00081": "pay_00081h",
+    "order_00082": "pay_00082c",
+    "order_00083": "pay_00083d",
+    "order_00084": "pay_00084d",
+    "order_00086": "pay_00086h",
+    "order_00087": "pay_00087d",
+    "order_00089": "pay_00089e",
+    "order_00090": "pay_00090d",
+    "order_00091": "pay_00091d",
+    "order_00092": "pay_00092g",
+    "order_00093": "pay_00093g",
+    "order_00094": "pay_00094e",
+    "order_00095": "pay_00095d",
+    "order_00096": "pay_00096c",
+    "order_00097": "pay_00097c",
+    "order_00098": "pay_00098f",
+    "order_00099": "pay_00099e",
+    "order_00100": "pay_00100f",
+    "order_00102": "pay_00102b",
+    "order_00103": "pay_00103e",
+    "order_00105": "pay_00105g",
+    "order_00106": "pay_00106f",
+    "order_00107": "pay_00107c",
+    "order_00108": "pay_00108b",
+    "order_00109": "pay_00109d",
+    "order_00110": "pay_00110f",
+    "order_00111": "pay_00111d",
+    "order_00112": "pay_00112a",
+    "order_00113": "pay_00113a",
+    "order_00114": "pay_00114e",
+    "order_00115": "pay_00115c",
+    "order_00116": "pay_00116f",
+    "order_00118": "pay_00118b",
+    "order_00119": "pay_00119f",
+    "order_00120": "pay_00120a",
+    "order_00122": "pay_00122g",
+    "order_00123": "pay_00123c",
+    "order_00124": "pay_00124h",
+    "order_00125": "pay_00125d",
+    "order_00128": "pay_00128f",
+    "order_00129": "pay_00129f",
+    "order_00130": "pay_00130h",
+    "order_00131": "pay_00131h",
+    "order_00132": "pay_00132b",
+    "order_00133": "pay_00133b",
+    "order_00134": "pay_00134e",
+    "order_00135": "pay_00135h",
+    "order_00136": "pay_00136c",
+    "order_00138": "pay_00138h",
+    "order_00139": "pay_00139f",
+    "order_00140": "pay_00140c",
+    "order_00141": "pay_00141a",
+    "order_00142": "pay_00142a",
+    "order_00143": "pay_00143e",
+    "order_00144": "pay_00144d",
+    "order_00145": "pay_00145a",
+    "order_00146": "pay_00146d",
+    "order_00147": "pay_00147b",
+    "order_00148": "pay_00148g",
+    "order_00149": "pay_00149a",
+    "order_00150": "pay_00150e",
+    "order_00151": "pay_00151e",
+    "order_00152": "pay_00152d",
+    "order_00153": "pay_00153h",
+    "order_00154": "pay_00154e",
+    "order_00156": "pay_00156c",
+    "order_00157": "pay_00157b",
+    "order_00158": "pay_00158a",
+    "order_00159": "pay_00159d",
+    "order_00160": "pay_00160f",
+    "order_00161": "pay_00161a",
+    "order_00162": "pay_00162e",
+    "order_00164": "pay_00164e",
+    "order_00165": "pay_00165b",
+    "order_00166": "pay_00166g",
+    "order_00167": "pay_00167c",
+    "order_00168": "pay_00168f",
+    "order_00169": "pay_00169e",
+    "order_00170": "pay_00170c",
+    "order_00171": "pay_00171d",
+    "order_00172": "pay_00172c",
+    "order_00173": "pay_00173g",
+    "order_00174": "pay_00174c",
+    "order_00175": "pay_00175d",
+    "order_00176": "pay_00176d",
+    "order_00178": "pay_00178f",
+    "order_00179": "pay_00179d",
+    "order_00180": "pay_00180f",
+    "order_00181": "pay_00181b",
+    "order_00183": "pay_00183f",
+    "order_00184": "pay_00184c",
+    "order_00185": "pay_00185c",
+    "order_00186": "pay_00186h",
+    "order_00187": "pay_00187e",
+    "order_00188": "pay_00188f",
+    "order_00189": "pay_00189f",
+    "order_00190": "pay_00190d",
+    "order_00191": "pay_00191b",
+    "order_00192": "pay_00192h",
+    "order_00193": "pay_00193h",
+    "order_00194": "pay_00194f",
+    "order_00195": "pay_00195b",
+    "order_00196": "pay_00196b",
+    "order_00197": "pay_00197f",
+    "order_00198": "pay_00198e",
+    "order_00199": "pay_00199f",
+    "order_00201": "pay_00201g",
+    "order_00202": "pay_00202a",
+    "order_00203": "pay_00203h",
+    "order_00204": "pay_00204a",
+    "order_00205": "pay_00205a",
+    "order_00207": "pay_00207g",
+    "order_00208": "pay_00208b",
+    "order_00209": "pay_00209b",
+    "order_00210": "pay_00210f",
+    "order_00211": "pay_00211e",
+    "order_00212": "pay_00212e",
+    "order_00213": "pay_00213h",
+    "order_00214": "pay_00214g",
+    "order_00216": "pay_00216e",
+    "order_00217": "pay_00217e",
+    "order_00218": "pay_00218c",
+    "order_00219": "pay_00219h",
+    "order_00220": "pay_00220h",
+    "order_00221": "pay_00221f",
+    "order_00222": "pay_00222d",
+    "order_00223": "pay_00223c",
+    "order_00224": "pay_00224c",
+    "order_00225": "pay_00225h",
+    "order_00226": "pay_00226c",
+    "order_00228": "pay_00228b",
+    "order_00229": "pay_00229g",
+    "order_00230": "pay_00230f",
+    "order_00231": "pay_00231h",
+    "order_00232": "pay_00232b",
+    "order_00233": "pay_00233c",
+    "order_00235": "pay_00235c",
+    "order_00236": "pay_00236f",
+    "order_00237": "pay_00237h",
+    "order_00238": "pay_00238e",
+    "order_00239": "pay_00239h",
+    "order_00241": "pay_00241d",
+    "order_00242": "pay_00242a",
+    "order_00243": "pay_00243f",
+    "order_00244": "pay_00244d",
+    "order_00245": "pay_00245c",
+    "order_00247": "pay_00247f",
+    "order_00248": "pay_00248h",
+    "order_00249": "pay_00249a",
+    "order_00250": "pay_00250f",
+    "order_00251": "pay_00251h",
+    "order_00252": "pay_00252c",
+    "order_00253": "pay_00253h",
+    "order_00254": "pay_00254e",
+    "order_00255": "pay_00255h",
+    "order_00257": "pay_00257d",
+    "order_00258": "pay_00258a",
+    "order_00259": "pay_00259a",
+    "order_00260": "pay_00260g",
+    "order_00261": "pay_00261e",
+    "order_00266": "pay_00266c",
+    "order_00267": "pay_00267e",
+    "order_00268": "pay_00268e",
+    "order_00269": "pay_00269g",
+    "order_00270": "pay_00270e",
+    "order_00271": "pay_00271f",
+    "order_00272": "pay_00272c",
+    "order_00274": "pay_00274b",
+    "order_00275": "pay_00275e",
+    "order_00276": "pay_00276g",
+    "order_00277": "pay_00277e",
+    "order_00278": "pay_00278d",
+    "order_00279": "pay_00279h",
+    "order_00280": "pay_00280g",
+    "order_00281": "pay_00281b",
+    "order_00282": "pay_00282h",
+    "order_00283": "pay_00283b",
+    "order_00284": "pay_00284d",
+    "order_00285": "pay_00285a",
+    "order_00286": "pay_00286a",
+    "order_00287": "pay_00287b",
+    "order_00288": "pay_00288h",
+    "order_00289": "pay_00289d",
+    "order_00290": "pay_00290g",
+    "order_00291": "pay_00291d",
+    "order_00292": "pay_00292e",
+    "order_00293": "pay_00293g",
+    "order_00294": "pay_00294c",
+    "order_00295": "pay_00295f",
+    "order_00296": "pay_00296f",
+    "order_00298": "pay_00298h",
+    "order_00299": "pay_00299d"
+  },
+  "payment_to_settlement": {
+    "pay_00051d": "setl_0000",
+    "pay_00061f": "setl_0000",
+    "pay_00083d": "setl_0000",
+    "pay_00209b": "setl_0000",
+    "pay_00248h": "setl_0000",
+    "pay_00281b": "setl_0000",
+    "pay_00292e": "setl_0000",
+    "pay_00001b": "setl_0001",
+    "pay_00049b": "setl_0001",
+    "pay_00092g": "setl_0001",
+    "pay_00113a": "setl_0001",
+    "pay_00136c": "setl_0001",
+    "pay_00138h": "setl_0001",
+    "pay_00142a": "setl_0001",
+    "pay_00249a": "setl_0001",
+    "pay_00261e": "setl_0001",
+    "pay_00279h": "setl_0001",
+    "pay_00054e": "setl_0002",
+    "pay_00081h": "setl_0002",
+    "pay_00134e": "setl_0002",
+    "pay_00157b": "setl_0002",
+    "pay_00288h": "setl_0002",
+    "pay_00075e": "setl_0003",
+    "pay_00090d": "setl_0003",
+    "pay_00095d": "setl_0003",
+    "pay_00099e": "setl_0003",
+    "pay_00225h": "setl_0003",
+    "pay_00226c": "setl_0003",
+    "pay_00239h": "setl_0003",
+    "pay_00253h": "setl_0003",
+    "pay_00070b": "setl_0004",
+    "pay_00082c": "setl_0004",
+    "pay_00084d": "setl_0004",
+    "pay_00123c": "setl_0004",
+    "pay_00124h": "setl_0004",
+    "pay_00144d": "setl_0004",
+    "pay_00244d": "setl_0004",
+    "pay_00015c": "setl_0005",
+    "pay_00024f": "setl_0005",
+    "pay_00029f": "setl_0005",
+    "pay_00108b": "setl_0005",
+    "pay_00147b": "setl_0005",
+    "pay_00150e": "setl_0005",
+    "pay_00152d": "setl_0005",
+    "pay_00165b": "setl_0005",
+    "pay_00169e": "setl_0005",
+    "pay_00171d": "setl_0005",
+    "pay_00230f": "setl_0005",
+    "pay_00283b": "setl_0005",
+    "pay_00294c": "setl_0005",
+    "pay_00040c": "setl_0006",
+    "pay_00076g": "setl_0006",
+    "pay_00094e": "setl_0006",
+    "pay_00115c": "setl_0006",
+    "pay_00167c": "setl_0006",
+    "pay_00172c": "setl_0006",
+    "pay_00202a": "setl_0006",
+    "pay_00282h": "setl_0006",
+    "pay_00002g": "setl_0007",
+    "pay_00027d": "setl_0007",
+    "pay_00089e": "setl_0007",
+    "pay_00109d": "setl_0007",
+    "pay_00111d": "setl_0007",
+    "pay_00158a": "setl_0007",
+    "pay_00237h": "setl_0007",
+    "pay_00252c": "setl_0007",
+    "pay_00269g": "setl_0007",
+    "pay_00033a": "setl_0008",
+    "pay_00057d": "setl_0008",
+    "pay_00069d": "setl_0008",
+    "pay_00103e": "setl_0008",
+    "pay_00135h": "setl_0008",
+    "pay_00151e": "setl_0008",
+    "pay_00170c": "setl_0008",
+    "pay_00179d": "setl_0008",
+    "pay_00190d": "setl_0008",
+    "pay_00254e": "setl_0008",
+    "pay_00274b": "setl_0008",
+    "pay_orphan_0": "setl_0008",
+    "pay_00098f": "setl_0009",
+    "pay_00110f": "setl_0009",
+    "pay_00129f": "setl_0009",
+    "pay_00141a": "setl_0009",
+    "pay_00160f": "setl_0009",
+    "pay_00186h": "setl_0009",
+    "pay_00198e": "setl_0009",
+    "pay_00218c": "setl_0009",
+    "pay_00276g": "setl_0009",
+    "pay_00000a": "setl_0010",
+    "pay_00006b": "setl_0010",
+    "pay_00043a": "setl_0010",
+    "pay_00056e": "setl_0010",
+    "pay_00199f": "setl_0010",
+    "pay_00213h": "setl_0010",
+    "pay_00216e": "setl_0010",
+    "pay_00229g": "setl_0010",
+    "pay_00270e": "setl_0010",
+    "pay_00295f": "setl_0010",
+    "pay_00005c": "setl_0011",
+    "pay_00010h": "setl_0011",
+    "pay_00053a": "setl_0011",
+    "pay_00074b": "setl_0011",
+    "pay_00100f": "setl_0011",
+    "pay_00131h": "setl_0011",
+    "pay_00166g": "setl_0011",
+    "pay_00228b": "setl_0011",
+    "pay_00241d": "setl_0011",
+    "pay_00250f": "setl_0011",
+    "pay_00285a": "setl_0011",
+    "pay_00290g": "setl_0011",
+    "pay_orphan_1": "setl_0011",
+    "pay_00012g": "setl_0012",
+    "pay_00058e": "setl_0012",
+    "pay_00096c": "setl_0012",
+    "pay_00120a": "setl_0012",
+    "pay_00145a": "setl_0012",
+    "pay_00181b": "setl_0012",
+    "pay_00233c": "setl_0012",
+    "pay_00277e": "setl_0012",
+    "pay_00286a": "setl_0012",
+    "pay_00296f": "setl_0012",
+    "pay_00003e": "setl_0013",
+    "pay_00007b": "setl_0013",
+    "pay_00032d": "setl_0013",
+    "pay_00047a": "setl_0013",
+    "pay_00079e": "setl_0013",
+    "pay_00119f": "setl_0013",
+    "pay_00148g": "setl_0013",
+    "pay_00183f": "setl_0013",
+    "pay_00187e": "setl_0013",
+    "pay_00195b": "setl_0013",
+    "pay_00238e": "setl_0013",
+    "pay_00247f": "setl_0013",
+    "pay_00016g": "setl_0014",
+    "pay_00041b": "setl_0014",
+    "pay_00078e": "setl_0014",
+    "pay_00087d": "setl_0014",
+    "pay_00091d": "setl_0014",
+    "pay_00130h": "setl_0014",
+    "pay_00210f": "setl_0014",
+    "pay_00221f": "setl_0014",
+    "pay_00291d": "setl_0014",
+    "pay_00026f": "setl_0015",
+    "pay_00028b": "setl_0015",
+    "pay_00093g": "setl_0015",
+    "pay_00159d": "setl_0015",
+    "pay_00164e": "setl_0015",
+    "pay_00192h": "setl_0015",
+    "pay_00193h": "setl_0015",
+    "pay_00208b": "setl_0015",
+    "pay_00222d": "setl_0015",
+    "pay_00050c": "setl_0016",
+    "pay_00107c": "setl_0016",
+    "pay_00114e": "setl_0016",
+    "pay_00174c": "setl_0016",
+    "pay_00178f": "setl_0016",
+    "pay_00260g": "setl_0016",
+    "pay_00280g": "setl_0016",
+    "pay_00004d": "setl_0017",
+    "pay_00019a": "setl_0017",
+    "pay_00037b": "setl_0017",
+    "pay_00052e": "setl_0017",
+    "pay_00068b": "setl_0017",
+    "pay_00122g": "setl_0017",
+    "pay_00139f": "setl_0017",
+    "pay_00143e": "setl_0017",
+    "pay_00168f": "setl_0017",
+    "pay_00194f": "setl_0017",
+    "pay_00219h": "setl_0017",
+    "pay_00266c": "setl_0017",
+    "pay_00268e": "setl_0017",
+    "pay_00271f": "setl_0017",
+    "pay_00298h": "setl_0017",
+    "pay_00223c": "setl_0018",
+    "pay_00232b": "setl_0018",
+    "pay_00275e": "setl_0018",
+    "pay_00287b": "setl_0018",
+    "pay_00020b": "setl_0019",
+    "pay_00031f": "setl_0019",
+    "pay_00146d": "setl_0019",
+    "pay_00153h": "setl_0019",
+    "pay_00156c": "setl_0019",
+    "pay_00161a": "setl_0019",
+    "pay_00188f": "setl_0019",
+    "pay_00217e": "setl_0019",
+    "pay_00220h": "setl_0019",
+    "pay_orphan_2": "setl_0019",
+    "pay_00062h": "setl_0020",
+    "pay_00112a": "setl_0020",
+    "pay_00125d": "setl_0020",
+    "pay_00173g": "setl_0020",
+    "pay_00176d": "setl_0020",
+    "pay_00185c": "setl_0020",
+    "pay_00203h": "setl_0020",
+    "pay_00211e": "setl_0020",
+    "pay_00212e": "setl_0020",
+    "pay_00214g": "setl_0020",
+    "pay_00224c": "setl_0020",
+    "pay_00236f": "setl_0020",
+    "pay_00284d": "setl_0020",
+    "pay_00059h": "setl_0021",
+    "pay_00067h": "setl_0021",
+    "pay_00072c": "setl_0021",
+    "pay_00118b": "setl_0021",
+    "pay_00196b": "setl_0021",
+    "pay_00289d": "setl_0021",
+    "pay_00293g": "setl_0021",
+    "pay_00008h": "setl_0022",
+    "pay_00023e": "setl_0022",
+    "pay_00038h": "setl_0022",
+    "pay_00042g": "setl_0022",
+    "pay_00086h": "setl_0022",
+    "pay_00162e": "setl_0022",
+    "pay_00175d": "setl_0022",
+    "pay_00180f": "setl_0022",
+    "pay_00197f": "setl_0022",
+    "pay_00009h": "setl_0023",
+    "pay_00022c": "setl_0023",
+    "pay_00030c": "setl_0023",
+    "pay_00060a": "setl_0023",
+    "pay_00063b": "setl_0023",
+    "pay_00097c": "setl_0023",
+    "pay_00132b": "setl_0023",
+    "pay_00149a": "setl_0023",
+    "pay_00154e": "setl_0023",
+    "pay_00267e": "setl_0023",
+    "pay_00272c": "setl_0023",
+    "pay_00299d": "setl_0023",
+    "pay_00035h": "setl_0024",
+    "pay_00045e": "setl_0024",
+    "pay_00065d": "setl_0024",
+    "pay_00073b": "setl_0024",
+    "pay_00105g": "setl_0024",
+    "pay_00140c": "setl_0024",
+    "pay_00204a": "setl_0024",
+    "pay_00207g": "setl_0024",
+    "pay_00245c": "setl_0024",
+    "pay_00257d": "setl_0024",
+    "pay_00036a": "setl_0025",
+    "pay_00044b": "setl_0025",
+    "pay_00102b": "setl_0025",
+    "pay_00184c": "setl_0025",
+    "pay_00189f": "setl_0025",
+    "pay_00191b": "setl_0025",
+    "pay_00201g": "setl_0025",
+    "pay_00231h": "setl_0025",
+    "pay_00243f": "setl_0025",
+    "pay_00025d": "setl_0026",
+    "pay_00034c": "setl_0026",
+    "pay_00039b": "setl_0026",
+    "pay_00106f": "setl_0026",
+    "pay_00116f": "setl_0026",
+    "pay_00128f": "setl_0026",
+    "pay_00242a": "setl_0026",
+    "pay_00258a": "setl_0026",
+    "pay_00278d": "setl_0026",
+    "pay_00048f": "setl_0027",
+    "pay_00133b": "setl_0027",
+    "pay_00205a": "setl_0027",
+    "pay_00235c": "setl_0027",
+    "pay_00251h": "setl_0027",
+    "pay_00255h": "setl_0027",
+    "pay_00259a": "setl_0027"
+  },
+  "settlement_to_bank": {
+    "setl_0000": [
+      "bank_00001"
+    ],
+    "setl_0001": [
+      "bank_00002"
+    ],
+    "setl_0002": [],
+    "setl_0003": [
+      "bank_00003"
+    ],
+    "setl_0004": [
+      "bank_00004"
+    ],
+    "setl_0005": [
+      "bank_00005"
+    ],
+    "setl_0006": [
+      "bank_00006"
+    ],
+    "setl_0007": [
+      "bank_00007"
+    ],
+    "setl_0008": [
+      "bank_00008"
+    ],
+    "setl_0009": [
+      "bank_00009"
+    ],
+    "setl_0010": [
+      "bank_00010"
+    ],
+    "setl_0011": [
+      "bank_00011"
+    ],
+    "setl_0012": [
+      "bank_00012"
+    ],
+    "setl_0013": [
+      "bank_00013"
+    ],
+    "setl_0014": [
+      "bank_00014"
+    ],
+    "setl_0015": [
+      "bank_00015",
+      "bank_00016"
+    ],
+    "setl_0016": [
+      "bank_00017"
+    ],
+    "setl_0017": [
+      "bank_00018"
+    ],
+    "setl_0018": [
+      "bank_00019"
+    ],
+    "setl_0019": [
+      "bank_00020"
+    ],
+    "setl_0020": [
+      "bank_00021"
+    ],
+    "setl_0021": [
+      "bank_00022"
+    ],
+    "setl_0022": [
+      "bank_00022"
+    ],
+    "setl_0023": [],
+    "setl_0024": [
+      "bank_00023"
+    ],
+    "setl_0025": [],
+    "setl_0026": [
+      "bank_00024"
+    ],
+    "setl_0027": [
+      "bank_00025"
+    ]
+  },
+  "bank_to_settlements": {
+    "bank_00001": [
+      "setl_0000"
+    ],
+    "bank_00002": [
+      "setl_0001"
+    ],
+    "bank_00003": [
+      "setl_0003"
+    ],
+    "bank_00004": [
+      "setl_0004"
+    ],
+    "bank_00005": [
+      "setl_0005"
+    ],
+    "bank_00006": [
+      "setl_0006"
+    ],
+    "bank_00007": [
+      "setl_0007"
+    ],
+    "bank_00008": [
+      "setl_0008"
+    ],
+    "bank_00009": [
+      "setl_0009"
+    ],
+    "bank_00010": [
+      "setl_0010"
+    ],
+    "bank_00011": [
+      "setl_0011"
+    ],
+    "bank_00012": [
+      "setl_0012"
+    ],
+    "bank_00013": [
+      "setl_0013"
+    ],
+    "bank_00014": [
+      "setl_0014"
+    ],
+    "bank_00015": [
+      "setl_0015"
+    ],
+    "bank_00016": [
+      "setl_0015"
+    ],
+    "bank_00017": [
+      "setl_0016"
+    ],
+    "bank_00018": [
+      "setl_0017"
+    ],
+    "bank_00019": [
+      "setl_0018"
+    ],
+    "bank_00020": [
+      "setl_0019"
+    ],
+    "bank_00021": [
+      "setl_0020"
+    ],
+    "bank_00022": [
+      "setl_0021",
+      "setl_0022"
+    ],
+    "bank_00023": [
+      "setl_0024"
+    ],
+    "bank_00024": [
+      "setl_0026"
+    ],
+    "bank_00025": [
+      "setl_0027"
+    ],
+    "bank_00026": [],
+    "bank_00027": [],
+    "bank_00028": [],
+    "bank_00029": []
+  },
+  "expected_exceptions": [
+    {
+      "entity_type": "payment",
+      "entity_id": "pay_00057d",
+      "reason": "GST_MISMATCH",
+      "note": "GST off 18%"
+    },
+    {
+      "entity_type": "payment",
+      "entity_id": "pay_00086h",
+      "reason": "FEE_RATE_MISMATCH",
+      "note": "fee off contracted MDR"
+    },
+    {
+      "entity_type": "payment",
+      "entity_id": "pay_00103e",
+      "reason": "FEE_RATE_MISMATCH",
+      "note": "fee off contracted MDR"
+    },
+    {
+      "entity_type": "payment",
+      "entity_id": "pay_00142a",
+      "reason": "GST_MISMATCH",
+      "note": "GST off 18%"
+    },
+    {
+      "entity_type": "payment",
+      "entity_id": "pay_00146d",
+      "reason": "GST_MISMATCH",
+      "note": "GST off 18%"
+    },
+    {
+      "entity_type": "payment",
+      "entity_id": "pay_00147b",
+      "reason": "FEE_RATE_MISMATCH",
+      "note": "fee off contracted MDR"
+    },
+    {
+      "entity_type": "payment",
+      "entity_id": "pay_00162e",
+      "reason": "GST_MISMATCH",
+      "note": "GST off 18%"
+    },
+    {
+      "entity_type": "payment",
+      "entity_id": "pay_00173g",
+      "reason": "GST_MISMATCH",
+      "note": "GST off 18%"
+    },
+    {
+      "entity_type": "payment",
+      "entity_id": "pay_00189f",
+      "reason": "GST_MISMATCH",
+      "note": "GST off 18%"
+    },
+    {
+      "entity_type": "payment",
+      "entity_id": "pay_00207g",
+      "reason": "GST_MISMATCH",
+      "note": "GST off 18%"
+    },
+    {
+      "entity_type": "payment",
+      "entity_id": "pay_00274b",
+      "reason": "FEE_RATE_MISMATCH",
+      "note": "fee off contracted MDR"
+    },
+    {
+      "entity_type": "payment",
+      "entity_id": "pay_00290g",
+      "reason": "FEE_RATE_MISMATCH",
+      "note": "fee off contracted MDR"
+    },
+    {
+      "entity_type": "payment",
+      "entity_id": "pay_00294c",
+      "reason": "FEE_RATE_MISMATCH",
+      "note": "fee off contracted MDR"
+    },
+    {
+      "entity_type": "payment",
+      "entity_id": "pay_orphan_0",
+      "reason": "PAYMENT_NO_ORDER",
+      "note": "capture with no order row"
+    },
+    {
+      "entity_type": "payment",
+      "entity_id": "pay_orphan_1",
+      "reason": "PAYMENT_NO_ORDER",
+      "note": "capture with no order row"
+    },
+    {
+      "entity_type": "payment",
+      "entity_id": "pay_orphan_2",
+      "reason": "PAYMENT_NO_ORDER",
+      "note": "capture with no order row"
+    },
+    {
+      "entity_type": "settlement",
+      "entity_id": "setl_0004",
+      "reason": "BATCH_ARITHMETIC_MISMATCH",
+      "note": "declared payout != sum(net) - refunds"
+    },
+    {
+      "entity_type": "settlement",
+      "entity_id": "setl_0002",
+      "reason": "SETTLEMENT_NOT_IN_BANK",
+      "note": "gateway declared payout, no bank credit"
+    },
+    {
+      "entity_type": "settlement",
+      "entity_id": "setl_0003",
+      "reason": "AMOUNT_MISMATCH",
+      "note": "bank credit short of declared payout (TDS withheld)"
+    },
+    {
+      "entity_type": "settlement",
+      "entity_id": "setl_0023",
+      "reason": "SETTLEMENT_NOT_IN_BANK",
+      "note": "gateway declared payout, no bank credit"
+    },
+    {
+      "entity_type": "settlement",
+      "entity_id": "setl_0024",
+      "reason": "AMOUNT_MISMATCH",
+      "note": "bank credit short of declared payout (TDS withheld)"
+    },
+    {
+      "entity_type": "settlement",
+      "entity_id": "setl_0025",
+      "reason": "SETTLEMENT_NOT_IN_BANK",
+      "note": "gateway declared payout, no bank credit"
+    },
+    {
+      "entity_type": "settlement",
+      "entity_id": "setl_0026",
+      "reason": "AMOUNT_MISMATCH",
+      "note": "bank credit short of declared payout (TDS withheld)"
+    },
+    {
+      "entity_type": "bank_line",
+      "entity_id": "bank_00026",
+      "reason": "UNEXPLAINED_BANK_CREDIT",
+      "note": "direct transfer, not a payout"
+    },
+    {
+      "entity_type": "bank_line",
+      "entity_id": "bank_00027",
+      "reason": "UNEXPLAINED_BANK_CREDIT",
+      "note": "direct transfer, not a payout"
+    },
+    {
+      "entity_type": "bank_line",
+      "entity_id": "bank_00028",
+      "reason": "UNEXPLAINED_BANK_CREDIT",
+      "note": "direct transfer, not a payout"
+    },
+    {
+      "entity_type": "bank_line",
+      "entity_id": "bank_00029",
+      "reason": "UNEXPLAINED_BANK_CREDIT",
+      "note": "direct transfer, not a payout"
+    }
+  ],
+  "tiers": {
+    "bank_00001": 2,
+    "bank_00002": 2,
+    "bank_00003": 2,
+    "bank_00004": 2,
+    "bank_00005": 1,
+    "bank_00006": 1,
+    "bank_00007": 2,
+    "bank_00008": 1,
+    "bank_00009": 1,
+    "bank_00010": 2,
+    "bank_00011": 1,
+    "bank_00012": 1,
+    "bank_00013": 1,
+    "bank_00014": 1,
+    "bank_00015": 3,
+    "bank_00016": 3,
+    "bank_00017": 1,
+    "bank_00018": 1,
+    "bank_00019": 1,
+    "bank_00020": 1,
+    "bank_00021": 3,
+    "bank_00022": 3,
+    "bank_00023": 2,
+    "bank_00024": 2,
+    "bank_00025": 1,
+    "bank_00026": 1,
+    "bank_00027": 1,
+    "bank_00028": 1,
+    "bank_00029": 1
+  },
+  "injected": [
+    {
+      "kind": "missing_pid",
+      "id": "order_00001"
+    },
+    {
+      "kind": "truncated_ref",
+      "id": "pay_00003e"
+    },
+    {
+      "kind": "typo_pid",
+      "id": "order_00010"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00016"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00031"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00035"
+    },
+    {
+      "kind": "truncated_ref",
+      "id": "pay_00047a"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00054"
+    },
+    {
+      "kind": "gst_wrong",
+      "id": "pay_00057d"
+    },
+    {
+      "kind": "truncated_ref",
+      "id": "pay_00062h"
+    },
+    {
+      "kind": "typo_pid",
+      "id": "order_00072"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00073"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00083"
+    },
+    {
+      "kind": "fee_rate_wrong",
+      "id": "pay_00086h"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00093"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00095"
+    },
+    {
+      "kind": "truncated_ref",
+      "id": "pay_00098f"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00099"
+    },
+    {
+      "kind": "fee_rate_wrong",
+      "id": "pay_00103e"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00107"
+    },
+    {
+      "kind": "truncated_ref",
+      "id": "pay_00108b"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00114"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00115"
+    },
+    {
+      "kind": "truncated_ref",
+      "id": "pay_00120a"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00129"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00131"
+    },
+    {
+      "kind": "gst_wrong",
+      "id": "pay_00142a"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00144"
+    },
+    {
+      "kind": "gst_wrong",
+      "id": "pay_00146d"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00146"
+    },
+    {
+      "kind": "fee_rate_wrong",
+      "id": "pay_00147b"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00153"
+    },
+    {
+      "kind": "typo_pid",
+      "id": "order_00156"
+    },
+    {
+      "kind": "gst_wrong",
+      "id": "pay_00162e"
+    },
+    {
+      "kind": "gst_wrong",
+      "id": "pay_00173g"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00174"
+    },
+    {
+      "kind": "gst_wrong",
+      "id": "pay_00189f"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00189"
+    },
+    {
+      "kind": "truncated_ref",
+      "id": "pay_00192h"
+    },
+    {
+      "kind": "gst_wrong",
+      "id": "pay_00207g"
+    },
+    {
+      "kind": "typo_pid",
+      "id": "order_00208"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00211"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00230"
+    },
+    {
+      "kind": "truncated_ref",
+      "id": "pay_00236f"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00239"
+    },
+    {
+      "kind": "truncated_ref",
+      "id": "pay_00244d"
+    },
+    {
+      "kind": "truncated_ref",
+      "id": "pay_00253h"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00259"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00261"
+    },
+    {
+      "kind": "missing_pid",
+      "id": "order_00270"
+    },
+    {
+      "kind": "typo_pid",
+      "id": "order_00272"
+    },
+    {
+      "kind": "fee_rate_wrong",
+      "id": "pay_00274b"
+    },
+    {
+      "kind": "truncated_ref",
+      "id": "pay_00283b"
+    },
+    {
+      "kind": "fee_rate_wrong",
+      "id": "pay_00290g"
+    },
+    {
+      "kind": "fee_rate_wrong",
+      "id": "pay_00294c"
+    },
+    {
+      "kind": "typo_pid",
+      "id": "order_00295"
+    },
+    {
+      "kind": "orphan_payment",
+      "id": "pay_orphan_0"
+    },
+    {
+      "kind": "orphan_payment",
+      "id": "pay_orphan_1"
+    },
+    {
+      "kind": "orphan_payment",
+      "id": "pay_orphan_2"
+    },
+    {
+      "kind": "batch_arith_wrong",
+      "id": "setl_0004"
+    },
+    {
+      "kind": "missing_in_bank",
+      "id": "setl_0002"
+    },
+    {
+      "kind": "silent_tds",
+      "id": "setl_0003"
+    },
+    {
+      "kind": "split_payout",
+      "id": "setl_0015"
+    },
+    {
+      "kind": "merged_payout",
+      "id": "bank_00022"
+    },
+    {
+      "kind": "missing_in_bank",
+      "id": "setl_0023"
+    },
+    {
+      "kind": "silent_tds",
+      "id": "setl_0024"
+    },
+    {
+      "kind": "missing_in_bank",
+      "id": "setl_0025"
+    },
+    {
+      "kind": "silent_tds",
+      "id": "setl_0026"
+    },
+    {
+      "kind": "direct_neft",
+      "id": "bank_00026"
+    },
+    {
+      "kind": "direct_neft",
+      "id": "bank_00027"
+    },
+    {
+      "kind": "direct_neft",
+      "id": "bank_00028"
+    },
+    {
+      "kind": "direct_neft",
+      "id": "bank_00029"
+    }
+  ]
+}

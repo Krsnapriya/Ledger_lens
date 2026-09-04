@@ -1,0 +1,187 @@
+<!doctype html><meta charset="utf-8"><title>LedgerLens close report</title>
+<style>
+:root{--bg:#0b0e14;--panel:#131822;--line:#1f2733;--txt:#e6edf3;--dim:#8b98a9;
+--ok:#3fb950;--warn:#d29922;--bad:#f85149;--acc:#58a6ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);
+font:14px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;padding:28px}
+h1{font-size:19px;margin:0 0 2px;letter-spacing:.5px}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:1.4px;color:var(--dim);
+margin:30px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+.sub{color:var(--dim);font-size:12px;margin-bottom:22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:13px}
+.k{color:var(--dim);font-size:10.5px;text-transform:uppercase;letter-spacing:.9px}
+.v{font-size:21px;margin-top:5px;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;color:var(--dim);font-weight:500;font-size:10.5px;
+text-transform:uppercase;letter-spacing:.9px;padding:7px 9px;border-bottom:1px solid var(--line)}
+td{padding:7px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:hover td{background:#161c27}
+.tag{display:inline-block;padding:1px 7px;border-radius:3px;font-size:10.5px;border:1px solid}
+.s-hi{color:var(--bad);border-color:#5c2323;background:#2a1414}
+.s-md{color:var(--warn);border-color:#5c4a1e;background:#251f10}
+.s-lo{color:var(--dim);border-color:var(--line);background:#161c27}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.warn{color:var(--warn)}.dim{color:var(--dim)}
+code{color:var(--acc);font-size:11px}
+details{margin-top:4px}summary{cursor:pointer;color:var(--acc);font-size:11px}
+pre{background:#0d1117;border:1px solid var(--line);border-radius:4px;padding:9px;
+overflow-x:auto;font-size:11px;color:var(--dim);margin:5px 0 0}
+</style>
+<h1>LedgerLens — finance close report</h1>
+<div class="sub">run <code>20260904T144225Z</code> · seed 7 ·
+dataset data · generated 2026-09-04T14:42:25+00:00</div>
+<div class="grid"><div class="card"><div class="k">Settlement match rate</div><div class="v ok">100.0%</div></div><div class="card"><div class="k">False match rate</div><div class="v ok">0.0%</div></div><div class="card"><div class="k">L3 precision</div><div class="v ok">1.0000</div></div><div class="card"><div class="k">L3 recall</div><div class="v ok">1.0000</div></div><div class="card"><div class="k">Records ingested</div><div class="v ">635</div></div><div class="card"><div class="k">Records / second</div><div class="v ">278,484.0</div></div><div class="card"><div class="k">Wall clock</div><div class="v ">0.0023s</div></div><div class="card"><div class="k">Open exceptions</div><div class="v warn">27</div></div></div>
+
+<h2>Reconciled value</h2>
+<div class="grid">
+<div class="card"><div class="k">Gross captured</div><div class="v">₹55,75,960.87</div></div>
+<div class="card"><div class="k">Payouts declared</div><div class="v">₹53,24,368.88</div></div>
+<div class="card"><div class="k">Bank credits seen</div><div class="v">₹48,29,345.93</div></div>
+<div class="card"><div class="k">Unreconciled exposure</div><div class="v bad">₹6,20,633.43</div></div>
+</div>
+
+<h2>Accuracy by difficulty tier <span class="dim">— one average would hide this</span></h2>
+<table><tr><th>tier</th><th>truth pairs</th><th>tp</th><th>fp</th><th>fn</th><th>precision</th><th>recall</th></tr><tr><td>tier_1</td><td>13</td><td>13</td><td class='bad'>0</td><td class='warn'>0</td><td>1.0000</td><td>1.0000</td></tr><tr><td>tier_2</td><td>8</td><td>8</td><td class='bad'>0</td><td class='warn'>0</td><td>1.0000</td><td>1.0000</td></tr><tr><td>tier_3</td><td>5</td><td>5</td><td class='bad'>0</td><td class='warn'>0</td><td>1.0000</td><td>1.0000</td></tr></table>
+
+<h2>Abstention curve <span class="dim">— automation level vs. accepted risk</span></h2>
+<table><tr><th>threshold</th><th>asserted</th><th>coverage</th><th>precision</th><th>false match rate</th><th>to human</th></tr><tr><td>0.00</td><td>286</td><td>100.00%</td><td>1.00000</td><td class="ok">0.000%</td><td>0</td></tr><tr><td>0.35</td><td>286</td><td>100.00%</td><td>1.00000</td><td class="ok">0.000%</td><td>0</td></tr><tr><td>0.50</td><td>286</td><td>100.00%</td><td>1.00000</td><td class="ok">0.000%</td><td>0</td></tr><tr><td>0.70</td><td>286</td><td>100.00%</td><td>1.00000</td><td class="ok">0.000%</td><td>0</td></tr><tr><td>0.85</td><td>285</td><td>99.65%</td><td>1.00000</td><td class="ok">0.000%</td><td>1</td></tr><tr><td>0.90</td><td>279</td><td>97.55%</td><td>1.00000</td><td class="ok">0.000%</td><td>7</td></tr><tr><td>0.95</td><td>279</td><td>97.55%</td><td>1.00000</td><td class="ok">0.000%</td><td>7</td></tr><tr><td>0.99</td><td>273</td><td>95.45%</td><td>1.00000</td><td class="ok">0.000%</td><td>12</td></tr></table>
+
+<h2>Ablation <span class="dim">— what each layer actually contributes</span></h2>
+<table><tr><th>config</th><th>layers enabled</th><th>match rate</th><th>false match rate</th><th>exceptions</th></tr><tr><td>A_exact_ids_only</td><td class='dim'>exact_ids</td><td>84.00%</td><td class="ok">0.000%</td><td>46</td></tr><tr><td>B_plus_amount_date</td><td class='dim'>exact_ids,tolerance_window</td><td>88.00%</td><td class="ok">0.000%</td><td>33</td></tr><tr><td>C_plus_fuzzy_narration</td><td class='dim'>exact_ids,tolerance_window,fuzzy_narration</td><td>88.00%</td><td class="ok">0.000%</td><td>33</td></tr><tr><td>D_plus_subset_sum_full</td><td class='dim'>exact_ids,tolerance_window,fuzzy_narration,subset_sum</td><td>100.00%</td><td class="ok">0.000%</td><td>27</td></tr></table>
+
+<h2>Matches by rule</h2>
+<table><tr><th>rule</th><th>count</th></tr><tr><td><code>R1.1_EXACT_PAYMENT_ID</code></td><td>228</td></tr><tr><td><code>R1.2_EXACT_ORDER_REF</code></td><td>26</td></tr><tr><td><code>R3.1_SETTLEMENT_ID_IN_NARRATION</code></td><td>14</td></tr><tr><td><code>R1.4_AMOUNT_DATE_ASSIGNMENT</code></td><td>6</td></tr><tr><td><code>R3.2_UTR_MATCH</code></td><td>5</td></tr><tr><td><code>R3.2_UTR_MATCH_WITH_SHORTFALL</code></td><td>2</td></tr><tr><td><code>R3.6_SUBSET_SUM_MERGED_2WAY</code></td><td>2</td></tr><tr><td><code>R3.4b_WITHHOLDING_RATE_MATCH</code></td><td>1</td></tr><tr><td><code>R3.7_SUBSET_SUM_SPLIT_2WAY</code></td><td>1</td></tr></table>
+
+<h2>Exception detection by reason code</h2>
+<table><tr><th>reason</th><th>expected</th><th>predicted</th><th>correct</th><th>missed</th><th>spurious</th></tr><tr><td><code>AMOUNT_MISMATCH</code></td><td>3</td><td>3</td><td class='ok'>3</td><td class='warn'>0</td><td class='bad'>0</td></tr><tr><td><code>BATCH_ARITHMETIC_MISMATCH</code></td><td>1</td><td>1</td><td class='ok'>1</td><td class='warn'>0</td><td class='bad'>0</td></tr><tr><td><code>FEE_RATE_MISMATCH</code></td><td>6</td><td>6</td><td class='ok'>6</td><td class='warn'>0</td><td class='bad'>0</td></tr><tr><td><code>GST_MISMATCH</code></td><td>7</td><td>7</td><td class='ok'>7</td><td class='warn'>0</td><td class='bad'>0</td></tr><tr><td><code>PAYMENT_NO_ORDER</code></td><td>3</td><td>3</td><td class='ok'>3</td><td class='warn'>0</td><td class='bad'>0</td></tr><tr><td><code>SETTLEMENT_NOT_IN_BANK</code></td><td>3</td><td>3</td><td class='ok'>3</td><td class='warn'>0</td><td class='bad'>0</td></tr><tr><td><code>UNEXPLAINED_BANK_CREDIT</code></td><td>4</td><td>4</td><td class='ok'>4</td><td class='warn'>0</td><td class='bad'>0</td></tr></table>
+
+<h2>AI layer</h2>
+<div class="card"><div class="k">backend</div><div class="v" style="font-size:15px">local-chargram</div>
+<div class="dim" style="margin-top:8px">similarity scores computed: 0 ·
+<b>tie-breaks actually decided by narration: 0</b> ·
+llm calls: 0 · llm errors: 0</div>
+<div class="dim" style="margin-top:6px">A tie-break count of zero means the amount+date key was
+already unique on this data. That is reported, not hidden.</div>
+</div>
+
+<h2>Exception ledger <span class="dim">— 27 open, highest severity first</span></h2>
+<table><tr><th>sev</th><th>cash at risk</th><th>type</th><th>entity</th><th>reason</th><th>detail</th><th>conf</th><th>suggested action</th></tr><tr><td><span class='tag s-hi'>100</span></td><td>₹1,10,371.61</td><td>settlement</td><td><code>setl_0002</code></td><td><code>SETTLEMENT_NOT_IN_BANK</code></td><td>gateway declared a payout with no corresponding bank credit<details><summary>evidence</summary><pre>{
+  &quot;payout_paise&quot;: 11037161,
+  &quot;settled_on&quot;: &quot;2026-04-05&quot;,
+  &quot;utr&quot;: &quot;UTR162787203229&quot;
+}</pre></details></td><td>0.90</td><td class='dim'>Raise payout trace with gateway; confirm beneficiary account.</td></tr><tr><td><span class='tag s-hi'>100</span></td><td>₹2,79,143.31</td><td>settlement</td><td><code>setl_0023</code></td><td><code>SETTLEMENT_NOT_IN_BANK</code></td><td>gateway declared a payout with no corresponding bank credit<details><summary>evidence</summary><pre>{
+  &quot;payout_paise&quot;: 27914331,
+  &quot;settled_on&quot;: &quot;2026-04-26&quot;,
+  &quot;utr&quot;: &quot;UTR760048479160&quot;
+}</pre></details></td><td>0.90</td><td class='dim'>Raise payout trace with gateway; confirm beneficiary account.</td></tr><tr><td><span class='tag s-hi'>100</span></td><td>₹1,65,433.60</td><td>settlement</td><td><code>setl_0025</code></td><td><code>SETTLEMENT_NOT_IN_BANK</code></td><td>gateway declared a payout with no corresponding bank credit<details><summary>evidence</summary><pre>{
+  &quot;payout_paise&quot;: 16543360,
+  &quot;settled_on&quot;: &quot;2026-04-28&quot;,
+  &quot;utr&quot;: &quot;UTR669559244804&quot;
+}</pre></details></td><td>0.90</td><td class='dim'>Raise payout trace with gateway; confirm beneficiary account.</td></tr><tr><td><span class='tag s-hi'>90</span></td><td>₹306.27</td><td>settlement</td><td><code>setl_0004</code></td><td><code>BATCH_ARITHMETIC_MISMATCH</code></td><td>declared payout != sum(net) - refunds<details><summary>evidence</summary><pre>{
+  &quot;declared_paise&quot;: 14768516,
+  &quot;expected_paise&quot;: 14799143,
+  &quot;delta_paise&quot;: -30627,
+  &quot;member_payments&quot;: 7,
+  &quot;refunds_applied&quot;: 0
+}</pre></details></td><td>1.00</td><td class='dim'>Request settlement breakup file; check for unlisted deduction.</td></tr><tr><td><span class='tag s-hi'>80</span></td><td>₹1,477.94</td><td>settlement</td><td><code>setl_0003</code></td><td><code>AMOUNT_MISMATCH</code></td><td>bank credit short of declared payout (no identifier survived; matched on a plausible withholding rate, uniquely, within window)<details><summary>evidence</summary><pre>{
+  &quot;declared_paise&quot;: 14779424,
+  &quot;credited_paise&quot;: 14631630,
+  &quot;delta_paise&quot;: -147794,
+  &quot;implied_rate_bp&quot;: 100
+}</pre></details></td><td>0.80</td><td class='dim'>Check for TDS/adjustment withheld outside the declared batch.</td></tr><tr><td><span class='tag s-hi'>80</span></td><td>₹1,896.20</td><td>settlement</td><td><code>setl_0024</code></td><td><code>AMOUNT_MISMATCH</code></td><td>bank credit short of declared payout<details><summary>evidence</summary><pre>{
+  &quot;declared_paise&quot;: 18961989,
+  &quot;credited_paise&quot;: 18772369,
+  &quot;delta_paise&quot;: -189620,
+  &quot;implied_rate_bp&quot;: 100
+}</pre></details></td><td>0.95</td><td class='dim'>Check for TDS/adjustment withheld outside the declared batch.</td></tr><tr><td><span class='tag s-hi'>80</span></td><td>₹2,385.20</td><td>settlement</td><td><code>setl_0026</code></td><td><code>AMOUNT_MISMATCH</code></td><td>bank credit short of declared payout<details><summary>evidence</summary><pre>{
+  &quot;declared_paise&quot;: 23851971,
+  &quot;credited_paise&quot;: 23613451,
+  &quot;delta_paise&quot;: -238520,
+  &quot;implied_rate_bp&quot;: 100
+}</pre></details></td><td>0.95</td><td class='dim'>Check for TDS/adjustment withheld outside the declared batch.</td></tr><tr><td><span class='tag s-md'>70</span></td><td>₹2,906.90</td><td>bank_line</td><td><code>bank_00026</code></td><td><code>UNEXPLAINED_BANK_CREDIT</code></td><td>credit could not be attributed to any payout<details><summary>evidence</summary><pre>{
+  &quot;amount_paise&quot;: 290690,
+  &quot;narration&quot;: &quot;NEFT CR-ORBIT MOBILITY-DIRECT-UTR951840275774&quot;,
+  &quot;value_date&quot;: &quot;2026-04-06&quot;
+}</pre></details></td><td>0.85</td><td class='dim'>Identify remitter; likely direct customer transfer, not gateway.</td></tr><tr><td><span class='tag s-md'>70</span></td><td>₹21,734.95</td><td>bank_line</td><td><code>bank_00027</code></td><td><code>UNEXPLAINED_BANK_CREDIT</code></td><td>credit could not be attributed to any payout<details><summary>evidence</summary><pre>{
+  &quot;amount_paise&quot;: 2173495,
+  &quot;narration&quot;: &quot;NEFT CR-GREENLEAF ORGANICS-DIRECT-UTR125828215650&quot;,
+  &quot;value_date&quot;: &quot;2026-04-23&quot;
+}</pre></details></td><td>0.85</td><td class='dim'>Identify remitter; likely direct customer transfer, not gateway.</td></tr><tr><td><span class='tag s-md'>70</span></td><td>₹14,291.40</td><td>bank_line</td><td><code>bank_00028</code></td><td><code>UNEXPLAINED_BANK_CREDIT</code></td><td>credit could not be attributed to any payout<details><summary>evidence</summary><pre>{
+  &quot;amount_paise&quot;: 1429140,
+  &quot;narration&quot;: &quot;NEFT CR-PIXELWORKS STUDIO-DIRECT-UTR555507126941&quot;,
+  &quot;value_date&quot;: &quot;2026-04-22&quot;
+}</pre></details></td><td>0.85</td><td class='dim'>Identify remitter; likely direct customer transfer, not gateway.</td></tr><tr><td><span class='tag s-md'>70</span></td><td>₹26,751.66</td><td>bank_line</td><td><code>bank_00029</code></td><td><code>UNEXPLAINED_BANK_CREDIT</code></td><td>credit could not be attributed to any payout<details><summary>evidence</summary><pre>{
+  &quot;amount_paise&quot;: 2675166,
+  &quot;narration&quot;: &quot;NEFT CR-PIXELWORKS STUDIO-DIRECT-UTR199457177592&quot;,
+  &quot;value_date&quot;: &quot;2026-04-26&quot;
+}</pre></details></td><td>0.85</td><td class='dim'>Identify remitter; likely direct customer transfer, not gateway.</td></tr><tr><td><span class='tag s-md'>60</span></td><td>₹199.50</td><td>payment</td><td><code>pay_00086h</code></td><td><code>FEE_RATE_MISMATCH</code></td><td>fee does not equal contracted MDR<details><summary>evidence</summary><pre>{
+  &quot;gross_paise&quot;: 3989962,
+  &quot;fee_charged&quot;: 99749,
+  &quot;fee_expected&quot;: 79799,
+  &quot;delta_paise&quot;: 19950
+}</pre></details></td><td>1.00</td><td class='dim'>Compare against contracted MDR; raise fee dispute if confirmed.</td></tr><tr><td><span class='tag s-md'>60</span></td><td>₹66.87</td><td>payment</td><td><code>pay_00103e</code></td><td><code>FEE_RATE_MISMATCH</code></td><td>fee does not equal contracted MDR<details><summary>evidence</summary><pre>{
+  &quot;gross_paise&quot;: 2674757,
+  &quot;fee_charged&quot;: 46808,
+  &quot;fee_expected&quot;: 53495,
+  &quot;delta_paise&quot;: -6687
+}</pre></details></td><td>1.00</td><td class='dim'>Compare against contracted MDR; raise fee dispute if confirmed.</td></tr><tr><td><span class='tag s-md'>60</span></td><td>₹50.34</td><td>payment</td><td><code>pay_00147b</code></td><td><code>FEE_RATE_MISMATCH</code></td><td>fee does not equal contracted MDR<details><summary>evidence</summary><pre>{
+  &quot;gross_paise&quot;: 2013610,
+  &quot;fee_charged&quot;: 35238,
+  &quot;fee_expected&quot;: 40272,
+  &quot;delta_paise&quot;: -5034
+}</pre></details></td><td>1.00</td><td class='dim'>Compare against contracted MDR; raise fee dispute if confirmed.</td></tr><tr><td><span class='tag s-md'>60</span></td><td>₹27.19</td><td>payment</td><td><code>pay_00274b</code></td><td><code>FEE_RATE_MISMATCH</code></td><td>fee does not equal contracted MDR<details><summary>evidence</summary><pre>{
+  &quot;gross_paise&quot;: 1087540,
+  &quot;fee_charged&quot;: 19032,
+  &quot;fee_expected&quot;: 21751,
+  &quot;delta_paise&quot;: -2719
+}</pre></details></td><td>1.00</td><td class='dim'>Compare against contracted MDR; raise fee dispute if confirmed.</td></tr><tr><td><span class='tag s-md'>60</span></td><td>₹40.69</td><td>payment</td><td><code>pay_00290g</code></td><td><code>FEE_RATE_MISMATCH</code></td><td>fee does not equal contracted MDR<details><summary>evidence</summary><pre>{
+  &quot;gross_paise&quot;: 1627600,
+  &quot;fee_charged&quot;: 36621,
+  &quot;fee_expected&quot;: 32552,
+  &quot;delta_paise&quot;: 4069
+}</pre></details></td><td>1.00</td><td class='dim'>Compare against contracted MDR; raise fee dispute if confirmed.</td></tr><tr><td><span class='tag s-md'>60</span></td><td>₹72.26</td><td>payment</td><td><code>pay_00294c</code></td><td><code>FEE_RATE_MISMATCH</code></td><td>fee does not equal contracted MDR<details><summary>evidence</summary><pre>{
+  &quot;gross_paise&quot;: 1445328,
+  &quot;fee_charged&quot;: 36133,
+  &quot;fee_expected&quot;: 28907,
+  &quot;delta_paise&quot;: 7226
+}</pre></details></td><td>1.00</td><td class='dim'>Compare against contracted MDR; raise fee dispute if confirmed.</td></tr><tr><td><span class='tag s-md'>55</span></td><td><span class=dim>—</span></td><td>payment</td><td><code>pay_00057d</code></td><td><code>GST_MISMATCH</code></td><td>GST on fee is not 18%<details><summary>evidence</summary><pre>{
+  &quot;fee_paise&quot;: 84748,
+  &quot;gst_charged&quot;: 12712,
+  &quot;gst_expected&quot;: 15255
+}</pre></details></td><td>1.00</td><td class='dim'>Verify GST on fee at 18%; check gateway tax invoice.</td></tr><tr><td><span class='tag s-md'>55</span></td><td><span class=dim>—</span></td><td>payment</td><td><code>pay_00142a</code></td><td><code>GST_MISMATCH</code></td><td>GST on fee is not 18%<details><summary>evidence</summary><pre>{
+  &quot;fee_paise&quot;: 22548,
+  &quot;gst_charged&quot;: 3382,
+  &quot;gst_expected&quot;: 4059
+}</pre></details></td><td>1.00</td><td class='dim'>Verify GST on fee at 18%; check gateway tax invoice.</td></tr><tr><td><span class='tag s-md'>55</span></td><td><span class=dim>—</span></td><td>payment</td><td><code>pay_00146d</code></td><td><code>GST_MISMATCH</code></td><td>GST on fee is not 18%<details><summary>evidence</summary><pre>{
+  &quot;fee_paise&quot;: 87234,
+  &quot;gst_charged&quot;: 13085,
+  &quot;gst_expected&quot;: 15702
+}</pre></details></td><td>1.00</td><td class='dim'>Verify GST on fee at 18%; check gateway tax invoice.</td></tr><tr><td><span class='tag s-md'>55</span></td><td><span class=dim>—</span></td><td>payment</td><td><code>pay_00162e</code></td><td><code>GST_MISMATCH</code></td><td>GST on fee is not 18%<details><summary>evidence</summary><pre>{
+  &quot;fee_paise&quot;: 15647,
+  &quot;gst_charged&quot;: 2347,
+  &quot;gst_expected&quot;: 2816
+}</pre></details></td><td>1.00</td><td class='dim'>Verify GST on fee at 18%; check gateway tax invoice.</td></tr><tr><td><span class='tag s-md'>55</span></td><td><span class=dim>—</span></td><td>payment</td><td><code>pay_00173g</code></td><td><code>GST_MISMATCH</code></td><td>GST on fee is not 18%<details><summary>evidence</summary><pre>{
+  &quot;fee_paise&quot;: 18328,
+  &quot;gst_charged&quot;: 2749,
+  &quot;gst_expected&quot;: 3299
+}</pre></details></td><td>1.00</td><td class='dim'>Verify GST on fee at 18%; check gateway tax invoice.</td></tr><tr><td><span class='tag s-md'>55</span></td><td><span class=dim>—</span></td><td>payment</td><td><code>pay_00189f</code></td><td><code>GST_MISMATCH</code></td><td>GST on fee is not 18%<details><summary>evidence</summary><pre>{
+  &quot;fee_paise&quot;: 23953,
+  &quot;gst_charged&quot;: 3593,
+  &quot;gst_expected&quot;: 4312
+}</pre></details></td><td>1.00</td><td class='dim'>Verify GST on fee at 18%; check gateway tax invoice.</td></tr><tr><td><span class='tag s-md'>55</span></td><td><span class=dim>—</span></td><td>payment</td><td><code>pay_00207g</code></td><td><code>GST_MISMATCH</code></td><td>GST on fee is not 18%<details><summary>evidence</summary><pre>{
+  &quot;fee_paise&quot;: 71042,
+  &quot;gst_charged&quot;: 10656,
+  &quot;gst_expected&quot;: 12788
+}</pre></details></td><td>1.00</td><td class='dim'>Verify GST on fee at 18%; check gateway tax invoice.</td></tr><tr><td><span class='tag s-md'>50</span></td><td>₹7,907.90</td><td>payment</td><td><code>pay_orphan_0</code></td><td><code>PAYMENT_NO_ORDER</code></td><td>gateway capture with no internal order<details><summary>evidence</summary><pre>{
+  &quot;gross_paise&quot;: 790790,
+  &quot;order_ref&quot;: null
+}</pre></details></td><td>0.00</td><td class='dim'>Capture with no internal order: check for out-of-band payment link.</td></tr><tr><td><span class='tag s-md'>50</span></td><td>₹6,661.05</td><td>payment</td><td><code>pay_orphan_1</code></td><td><code>PAYMENT_NO_ORDER</code></td><td>gateway capture with no internal order<details><summary>evidence</summary><pre>{
+  &quot;gross_paise&quot;: 666105,
+  &quot;order_ref&quot;: null
+}</pre></details></td><td>0.00</td><td class='dim'>Capture with no internal order: check for out-of-band payment link.</td></tr><tr><td><span class='tag s-md'>50</span></td><td>₹4,737.82</td><td>payment</td><td><code>pay_orphan_2</code></td><td><code>PAYMENT_NO_ORDER</code></td><td>gateway capture with no internal order<details><summary>evidence</summary><pre>{
+  &quot;gross_paise&quot;: 473782,
+  &quot;order_ref&quot;: null
+}</pre></details></td><td>0.00</td><td class='dim'>Capture with no internal order: check for out-of-band payment link.</td></tr></table>
+<div class="sub" style="margin-top:18px">Every row above is reproducible with the command in README.md.
+Nothing on this page is hand-entered; it is rendered from run.json.</div>
