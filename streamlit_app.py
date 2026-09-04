@@ -66,6 +66,27 @@ def load_csv(path: Path | None) -> pd.DataFrame | None:
         return None
 
 
+def for_display(obj: "pd.DataFrame | pd.Series") -> "pd.DataFrame | pd.Series":
+    """Make text columns safe for Streamlit's Arrow decoder.
+
+    pandas >= 3 stores text in the ``str`` dtype, which serialises to Arrow
+    ``large_string``. Streamlit builds before ~1.35 cannot decode that and
+    render `Unrecognized type: "LargeUtf8"` instead of the table. Casting to
+    ``object`` yields plain ``string``, which every build understands.
+    """
+    out = obj.copy()
+    if isinstance(out, pd.Series):
+        if str(out.dtype) == "str":
+            out = out.astype(object)
+    else:
+        for col in out.columns:
+            if str(out[col].dtype) == "str":
+                out[col] = out[col].astype(object)
+    if str(out.index.dtype) == "str":
+        out.index = out.index.astype(object)
+    return out
+
+
 # ---------------------------------------------------------------------------
 # Fallback headline numbers (published README — used only when artifacts missing)
 # ---------------------------------------------------------------------------
@@ -346,7 +367,7 @@ elif page == "Claims & Residual":
 
     st.subheader("Hard claims (synthetic)")
     st.dataframe(
-        pd.DataFrame(FALLBACK_CLAIMS, columns=["Claim", "Measured"]),
+        for_display(pd.DataFrame(FALLBACK_CLAIMS, columns=["Claim", "Measured"])),
         use_container_width=True,
         hide_index=True,
     )
@@ -425,7 +446,7 @@ elif page == "Exception Ledger":
             )
             view = view[mask]
 
-        st.dataframe(view, use_container_width=True, hide_index=True, height=420)
+        st.dataframe(for_display(view), use_container_width=True, hide_index=True, height=420)
 
         if money_cols:
             try:
@@ -476,11 +497,20 @@ elif page == "Matches":
                 pd.to_numeric(view[conf_cols[0]], errors="coerce").fillna(0) >= min_conf
             ]
 
-        st.dataframe(view, use_container_width=True, hide_index=True, height=420)
+        st.dataframe(for_display(view), use_container_width=True, hide_index=True, height=420)
 
         if rule_cols:
             st.subheader("Matches by rule")
-            st.bar_chart(view[rule_cols[0]].value_counts())
+            # A table rather than st.bar_chart: Streamlit 1.28's Vega layer
+            # renders an empty SVG for this data, and the counts read fine as text.
+            counts = view[rule_cols[0]].value_counts()
+            st.dataframe(
+                pd.DataFrame(
+                    {"rule": counts.index.astype(object), "matches": counts.to_numpy()}
+                ),
+                use_container_width=True,
+                hide_index=True,
+            )
     else:
         st.warning("matches.csv not found. Run `python -m recon.cli --orders 300 --seed 7` first.")
 
@@ -491,7 +521,7 @@ elif page == "BenchRec External":
     )
 
     st.dataframe(
-        pd.DataFrame(FALLBACK_BENCHREC),
+        for_display(pd.DataFrame(FALLBACK_BENCHREC)),
         use_container_width=True,
         hide_index=True,
     )
@@ -569,7 +599,7 @@ repeat   →  until nothing remains the agent may act on
     )
 
     st.dataframe(
-        pd.DataFrame(
+        for_display(pd.DataFrame(
             [
                 ("RETRY_WIDER_WINDOW", "Re-run engine with wider date bounds; all gates still apply"),
                 ("ACCEPT_EXPLAINED", "Close explained shortfall/duplicate; no money moves"),
@@ -577,7 +607,7 @@ repeat   →  until nothing remains the agent may act on
                 ("ESCALATE_TO_HUMAN", "Names the artefact a human must fetch"),
             ],
             columns=["Action", "Effect"],
-        ),
+        )),
         use_container_width=True,
         hide_index=True,
     )
